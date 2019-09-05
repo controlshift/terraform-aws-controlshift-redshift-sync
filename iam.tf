@@ -73,7 +73,6 @@ resource "aws_iam_role_policy" "lambda_loads_tables" {
   policy = data.aws_iam_policy_document.loader_execution_policy.json
 }
 
-
 data "aws_iam_policy_document" "loader_execution_policy" {
   statement {
     effect = "Allow"
@@ -97,19 +96,39 @@ data "aws_iam_policy_document" "loader_execution_policy" {
   statement {
     effect = "Allow"
     actions = [
+      "kms:Decrypt",
+      "kms:DescribeKey",
+      "kms:GetKeyPolicy"
+    ]
+    resources = [
+      aws_kms_alias.lambda_alias.arn,
+      aws_kms_key.lambda_config.arn
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:Get*",
+      "s3:Put*",
+      "s3:List*",
+    ]
+    resources = [
+      aws_s3_bucket.receiver.arn,
+      aws_s3_bucket.manifest.arn
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
       "sns:GetEndpointAttributes",
       "sns:GetSubscriptionAttributes",
       "sns:GetTopicAttributes",
       "sns:ListTopics",
       "sns:Publish",
       "sns:Subscribe",
-      "sns:Unsubscribe",
-      "s3:Get*",
-      "s3:Put*",
-      "s3:List*",
-      "kms:Decrypt",
-      "kms:DescribeKey",
-      "kms:GetKeyPolicy"
+      "sns:Unsubscribe"
     ]
     resources = ["*"]
   }
