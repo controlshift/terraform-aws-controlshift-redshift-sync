@@ -7,4 +7,5 @@
 
 # .tfvars files
 *.tfvars
+receiver/receiver.zip
 .idea/
