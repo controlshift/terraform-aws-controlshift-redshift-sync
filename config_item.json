@@ -1,0 +1,24 @@
+{
+  "s3Prefix": {"S": "${s3_bucket}/full/${bulk_data_table}"},
+  "loadClusters": {"L": [
+    {"M": {
+      "clusterEndpoint":  {"S": "${redshift_endpoint}"},
+      "clusterDB": {"S":  "${redshift_database_name}"},
+      "clusterPort": {"N": "${redshift_port}"},
+      "connectUser": {"S": "${redshift_username}" },
+      "connectPassword": {"S": "${redshift_password}" },
+      "targetTable": {"S": "${bulk_data_table}"},
+      "columnList": {"S": "${column_list}"},
+      "truncateTarget": {"BOOL": true},
+      "useSSL": {"BOOL": false}
+    }}]},
+  "copyOptions": {"S": "EMPTYASNULL"},
+  "dataFormat": {"S": "CSV"},
+  "csvDelimiter": {"S": ","},
+  "ignoreCsvHeader": {"BOOL": true},
+  "manifestBucket": {"S": "${manifest_bucket}"},
+  "manifestKey": {"S": "${manifest_prefix}"},
+  "failedManifestKey": {"S": "${failed_manifest_prefix}"},
+  "batchSize": {"N": "1"},
+  "currentBatch": {"S": "${current_batch}" }
+}
