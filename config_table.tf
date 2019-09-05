@@ -32,6 +32,7 @@ data "template_file" "loader_config_item" {
     redshift_port = var.redshift_port
     redshift_username = var.redshift_username
     redshift_password = aws_kms_ciphertext.redshift_password.ciphertext_blob
+    schema = var.redshift_schema
     s3_bucket = aws_s3_bucket.receiver.bucket
     manifest_bucket = aws_s3_bucket.manifest.bucket
     manifest_prefix = var.manifest_prefix

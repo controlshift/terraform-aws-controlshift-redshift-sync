@@ -7,7 +7,7 @@
       "clusterPort": {"N": "${redshift_port}"},
       "connectUser": {"S": "${redshift_username}" },
       "connectPassword": {"S": "${redshift_password}" },
-      "targetTable": {"S": "${bulk_data_table}"},
+      "targetTable": {"S": "${schema}.${bulk_data_table}"},
       "columnList": {"S": "${column_list}"},
       "truncateTarget": {"BOOL": true},
       "useSSL": {"BOOL": false}

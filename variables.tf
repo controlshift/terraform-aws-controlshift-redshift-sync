@@ -24,6 +24,12 @@ variable "redshift_password" {
   type  = string
 }
 
+variable "redshift_schema" {
+  type  = string
+  default = "public"
+  description = "The redshift schema to load tables into"
+}
+
 variable "receiver_bucket_name" {
   type        = string
   description = "Your S3 bucket name ingest CSVs will be stored in"
