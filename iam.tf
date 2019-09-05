@@ -93,17 +93,15 @@ data "aws_iam_policy_document" "loader_execution_policy" {
     ]
   }
 
+  # Apparently, the KMS resource needs to be *
   statement {
     effect = "Allow"
     actions = [
-      "kms:Decrypt",
       "kms:DescribeKey",
-      "kms:GetKeyPolicy"
+      "kms:GetKeyPolicy",
+      "kms:Decrypt"
     ]
-    resources = [
-      aws_kms_alias.lambda_alias.arn,
-      aws_kms_key.lambda_config.arn
-    ]
+    resources = ["*"]
   }
 
   statement {
@@ -115,7 +113,9 @@ data "aws_iam_policy_document" "loader_execution_policy" {
     ]
     resources = [
       aws_s3_bucket.receiver.arn,
-      aws_s3_bucket.manifest.arn
+      aws_s3_bucket.manifest.arn,
+      "${aws_s3_bucket.receiver.arn}/*",
+      "${aws_s3_bucket.manifest.arn}/*"
     ]
   }
 
