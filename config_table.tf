@@ -19,6 +19,18 @@ resource "aws_dynamodb_table_item" "load_config_full_items" {
   hash_key   = aws_dynamodb_table.loader_config.hash_key
 
   item = data.template_file.loader_config_full_item[each.key].rendered
+
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to item so that the Lambda updating the currentBatch does not conflict with terraform generated values.
+      # Otherwise Terraform will overwrite these values and the loader will become confused and try to re-load the first batch.
+      #
+      # A side effect of this, is that if you would actually like to change the loader configuration you must
+      # manually delete all of the configs in DynamoDB
+
+      item
+    ]
+  }
 }
 
 data "template_file" "loader_config_full_item" {
