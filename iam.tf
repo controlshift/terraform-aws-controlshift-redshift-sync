@@ -75,7 +75,6 @@ resource "aws_iam_role_policy" "lambda_loads_tables" {
 
 
 data "aws_iam_policy_document" "loader_execution_policy" {
-  # allow the lambda to write cloudwatch logs
   statement {
     effect = "Allow"
     actions = [
@@ -86,7 +85,18 @@ data "aws_iam_policy_document" "loader_execution_policy" {
       "dynamodb:PutItem",
       "dynamodb:Query",
       "dynamodb:Scan",
-      "dynamodb:UpdateItem",
+      "dynamodb:UpdateItem"
+    ]
+    resources = [
+      aws_dynamodb_table.loader_config.arn,
+      aws_dynamodb_table.batches.arn,
+      aws_dynamodb_table.processed_files.arn
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
       "sns:GetEndpointAttributes",
       "sns:GetSubscriptionAttributes",
       "sns:GetTopicAttributes",
