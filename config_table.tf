@@ -12,20 +12,21 @@ resource "aws_dynamodb_table" "loader_config" {
   hash_key = "s3Prefix"
 }
 
-resource "aws_dynamodb_table_item" "load_signatures" {
+resource "aws_dynamodb_table_item" "load_config_full_items" {
   for_each = toset([for table in jsondecode(data.http.bulk_data_schemas.body)["tables"] : table["table"]["name"]])
 
   table_name = aws_dynamodb_table.loader_config.name
   hash_key   = aws_dynamodb_table.loader_config.hash_key
 
-  item = data.template_file.loader_config_item[each.key].rendered
+  item = data.template_file.loader_config_full_item[each.key].rendered
 }
 
-data "template_file" "loader_config_item" {
+data "template_file" "loader_config_full_item" {
   for_each = toset([for table in jsondecode(data.http.bulk_data_schemas.body)["tables"] : table["table"]["name"]])
 
   template = "${file("${path.module}/config_item.json")}"
   vars = {
+    kind = "full"
     bulk_data_table = each.key
     redshift_endpoint = var.redshift_dns_name
     redshift_database_name: var.redshift_database_name
@@ -39,6 +40,39 @@ data "template_file" "loader_config_item" {
     failed_manifest_prefix = var.failed_manifest_prefix
     current_batch = random_id.current_batch.b64_url
     column_list = data.http.column_list[each.key].body
+    truncate_target = true
+  }
+}
+
+resource "aws_dynamodb_table_item" "load_config_incremental_items" {
+  for_each = toset([for table in jsondecode(data.http.bulk_data_schemas.body)["tables"] : table["table"]["name"]])
+
+  table_name = aws_dynamodb_table.loader_config.name
+  hash_key   = aws_dynamodb_table.loader_config.hash_key
+
+  item = data.template_file.loader_config_incremental_item[each.key].rendered
+}
+
+data "template_file" "loader_config_incremental_item" {
+  for_each = toset([for table in jsondecode(data.http.bulk_data_schemas.body)["tables"] : table["table"]["name"]])
+
+  template = "${file("${path.module}/config_item.json")}"
+  vars = {
+    kind = "incremental"
+    bulk_data_table = each.key
+    redshift_endpoint = var.redshift_dns_name
+    redshift_database_name: var.redshift_database_name
+    redshift_port = var.redshift_port
+    redshift_username = var.redshift_username
+    redshift_password = aws_kms_ciphertext.redshift_password.ciphertext_blob
+    schema = var.redshift_schema
+    s3_bucket = aws_s3_bucket.receiver.bucket
+    manifest_bucket = aws_s3_bucket.manifest.bucket
+    manifest_prefix = var.manifest_prefix
+    failed_manifest_prefix = var.failed_manifest_prefix
+    current_batch = random_id.current_batch.b64_url
+    column_list = data.http.column_list[each.key].body
+    truncate_target = false
   }
 }
 

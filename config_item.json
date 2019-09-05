@@ -1,5 +1,5 @@
 {
-  "s3Prefix": {"S": "${s3_bucket}/full/${bulk_data_table}"},
+  "s3Prefix": {"S": "${s3_bucket}/${kind}/${bulk_data_table}"},
   "loadClusters": {"L": [
     {"M": {
       "clusterEndpoint":  {"S": "${redshift_endpoint}"},
@@ -9,7 +9,7 @@
       "connectPassword": {"S": "${redshift_password}" },
       "targetTable": {"S": "${schema}.${bulk_data_table}"},
       "columnList": {"S": "${column_list}"},
-      "truncateTarget": {"BOOL": true},
+      "truncateTarget": {"BOOL": ${truncate_target}},
       "useSSL": {"BOOL": false}
     }}]},
   "copyOptions": {"S": "EMPTYASNULL"},

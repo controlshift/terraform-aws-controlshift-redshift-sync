@@ -59,6 +59,8 @@ exports.handler = async (event) => {
     console.log('Received event:', receivedJSON);
     if(receivedJSON.type === 'data.full_table_exported'){
         return processCsv(receivedJSON.data.url, receivedJSON.data.table, 'full');
+    } else if(receivedJSON.type === 'data.incremental_table_exported'){
+        return processCsv(receivedJSON.data.url, receivedJSON.data.table, 'incremental');
     } else {
         return Promise.resolve(sendResponse({"status": "skipped", "payload": receivedJSON}));
     }

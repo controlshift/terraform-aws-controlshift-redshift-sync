@@ -24,7 +24,6 @@ resource "aws_s3_bucket" "receiver" {
   }
 }
 
-
 resource "aws_s3_bucket" "manifest" {
   bucket = var.manifest_bucket_name
   acl    = "private"
