@@ -19,6 +19,8 @@
   "manifestBucket": {"S": "${manifest_bucket}"},
   "manifestKey": {"S": "${manifest_prefix}"},
   "failedManifestKey": {"S": "${failed_manifest_prefix}"},
+  "successTopicARN": {"S": "${success_topic_arn}"},
+  "failureTopicARN": {"S": "${failure_topic_arn}"},
   "batchSize": {"N": "1"},
   "currentBatch": {"S": "${current_batch}" }
 }

@@ -48,6 +48,16 @@ variable "failed_manifest_prefix" {
   type        = string
   description = "A file prefix that will be used for manifest logs on failure"
 }
+variable "success_topic_name" {
+  default = "ControlshiftLambdaLoaderSuccess"
+  type        = string
+  description = "An SNS topic name that will be notified about batch processing successes"
+}
+variable "failure_topic_name" {
+  default = "ControlshiftLambdaLoaderFailure"
+  type        = string
+  description = "An SNS topic name that will be notified about batch processing failures"
+}
 
 variable "controlshift_hostname" {
   default = "staging.controlshiftlabs.com"
