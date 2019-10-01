@@ -39,38 +39,56 @@ resource "aws_s3_bucket_notification" "notifications" {
 
 resource "aws_sns_topic" "success_sns_topic" {
   name = var.success_topic_name
-
-  policy = <<POLICY
-{
-    "Version":"2012-10-17",
-    "Statement":[{
-        "Effect": "Allow",
-        "Principal": {"AWS":"*"},
-        "Action": "SNS:Publish",
-        "Resource": "arn:aws:sns:*:*:${var.success_topic_name}",
-        "Condition":{
-            "ArnLike":{"aws:SourceArn":"${aws_lambda_function.loader.arn}"}
-        }
-    }]
-}
-POLICY
+  policy = data.aws_iam_policy_document.success_sns_notification_policy.json
 }
 
 resource "aws_sns_topic" "failure_sns_topic" {
   name = var.failure_topic_name
-
-  policy = <<POLICY
-{
-    "Version":"2012-10-17",
-    "Statement":[{
-        "Effect": "Allow",
-        "Principal": {"AWS":"*"},
-        "Action": "SNS:Publish",
-        "Resource": "arn:aws:sns:*:*:${var.failure_topic_name}",
-        "Condition":{
-            "ArnLike":{"aws:SourceArn":"${aws_lambda_function.loader.arn}"}
-        }
-    }]
+  policy = data.aws_iam_policy_document.failure_sns_notification_policy.json
 }
-POLICY
+
+data "aws_iam_policy_document" "success_sns_notification_policy" {
+  statement {
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+    actions = [
+      "SNS:Publish",
+    ]
+    resources = [
+      "arn:aws:sns:*:*:${var.success_topic_name}",
+    ]
+    condition {
+      test      = "ArnLike"
+      variable  = "aws:SourceArn"
+      values    = [
+        aws_lambda_function.loader.arn,
+      ]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "failure_sns_notification_policy" {
+  statement {
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+    actions = [
+      "SNS:Publish",
+    ]
+    resources = [
+      "arn:aws:sns:*:*:${var.failure_topic_name}",
+    ]
+    condition {
+      test      = "ArnLike"
+      variable  = "aws:SourceArn"
+      values    = [
+        aws_lambda_function.loader.arn,
+      ]
+    }
+  }
 }
