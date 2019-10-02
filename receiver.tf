@@ -10,6 +10,7 @@ resource "aws_lambda_function" "receiver_lambda" {
   role          = aws_iam_role.receiver_lambda_role.arn
   handler       = "receiver.handler"
   runtime       = "nodejs10.x"
+  timeout       = var.receiver_timeout
   source_code_hash = filebase64sha256(data.archive_file.receiver_zip.output_path)
 
   environment {
