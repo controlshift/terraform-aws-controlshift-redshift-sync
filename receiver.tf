@@ -6,7 +6,7 @@ data "archive_file" "receiver_zip" {
 
 resource "aws_lambda_function" "receiver_lambda" {
   filename = data.archive_file.receiver_zip.output_path
-  function_name = "controlshift-receive-webhook-handler"
+  function_name = "controlshift-webhook-handler"
   role          = aws_iam_role.receiver_lambda_role.arn
   handler       = "receiver.handler"
   runtime       = "nodejs10.x"
