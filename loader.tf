@@ -36,3 +36,37 @@ resource "aws_s3_bucket_notification" "notifications" {
     filter_prefix       = "full"
   }
 }
+
+resource "aws_sns_topic" "success_sns_topic" {
+  name = var.success_topic_name
+  policy = data.aws_iam_policy_document.sns_notification_policy.json
+}
+
+resource "aws_sns_topic" "failure_sns_topic" {
+  name = var.failure_topic_name
+  policy = data.aws_iam_policy_document.sns_notification_policy.json
+}
+
+data "aws_iam_policy_document" "sns_notification_policy" {
+  statement {
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+    actions = [
+      "SNS:Publish",
+    ]
+    resources = [
+      "arn:aws:sns:*:*:${var.success_topic_name}",
+      "arn:aws:sns:*:*:${var.failure_topic_name}",
+    ]
+    condition {
+      test      = "ArnLike"
+      variable  = "aws:SourceArn"
+      values    = [
+        aws_lambda_function.loader.arn,
+      ]
+    }
+  }
+}
