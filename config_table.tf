@@ -50,6 +50,8 @@ data "template_file" "loader_config_full_item" {
     manifest_bucket = aws_s3_bucket.manifest.bucket
     manifest_prefix = var.manifest_prefix
     failed_manifest_prefix = var.failed_manifest_prefix
+    success_topic_arn = aws_sns_topic.success_sns_topic.arn
+    failure_topic_arn = aws_sns_topic.failure_sns_topic.arn
     current_batch = random_id.current_batch.b64_url
     column_list = data.http.column_list[each.key].body
     truncate_target = true
@@ -94,6 +96,8 @@ data "template_file" "loader_config_incremental_item" {
     manifest_bucket = aws_s3_bucket.manifest.bucket
     manifest_prefix = var.manifest_prefix
     failed_manifest_prefix = var.failed_manifest_prefix
+    success_topic_arn = aws_sns_topic.success_sns_topic.arn
+    failure_topic_arn = aws_sns_topic.failure_sns_topic.arn
     current_batch = random_id.current_batch.b64_url
     column_list = data.http.column_list[each.key].body
     truncate_target = false
