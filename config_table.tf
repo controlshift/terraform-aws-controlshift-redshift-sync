@@ -118,7 +118,7 @@ resource "aws_kms_ciphertext" "redshift_password" {
 }
 
 resource "aws_kms_alias" "lambda_alias" {
-  name = "alias/LambaRedshiftLoaderKey"
+  name = "alias/ControlshiftLambaRedshiftLoaderKey"
   target_key_id = aws_kms_key.lambda_config.key_id
 }
 
