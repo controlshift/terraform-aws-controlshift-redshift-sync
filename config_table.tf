@@ -119,7 +119,7 @@ resource "aws_kms_alias" "lambda_alias" {
 }
 
 resource "aws_kms_key" "lambda_config" {
-  description = "Lambda Redshift Loader Master Encryption Key"
+  description = "Controlshift Lambda Redshift Loader Master Encryption Key"
   is_enabled  = true
 }
 

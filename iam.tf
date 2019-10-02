@@ -10,7 +10,8 @@ data "aws_iam_policy_document" "lambda_assume_role" {
 }
 
 resource "aws_iam_role" "receiver_lambda_role" {
-  name = "ReceiverLambdaRole"
+  name = "ControlshiftReceiverLambdaRole"
+  description = "Used by the controlshift-receive-webhook-handler Lambda for receiving db replication data from ControlShift"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
 
@@ -42,7 +43,8 @@ resource "aws_iam_role_policy" "lambda_accesses_code_bucket" {
 
 
 resource "aws_iam_role" "api_gateway_role" {
-  name = "APIGatewayRole"
+  name = "ControlshiftAPIGatewayRole"
+  description = "Used by the API Gateway for CloudWatch logging"
   assume_role_policy = data.aws_iam_policy_document.gateway_assume_role.json
 }
 
@@ -63,7 +65,8 @@ resource "aws_iam_role_policy_attachment" "gateway_cloudwatch_logging" {
 }
 
 resource "aws_iam_role" "loader_lambda_role" {
-  name = "LoaderLambdaRole"
+  name = "ControlshiftLoaderLambdaRole"
+  description = "Used by the controlshift-redshift-loader Lambda for processing db replication data from ControlShift into Redshift"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
 
