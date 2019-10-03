@@ -10,8 +10,8 @@ data "aws_iam_policy_document" "lambda_assume_role" {
 }
 
 resource "aws_iam_role" "receiver_lambda_role" {
-  name = "ControlshiftReceiverLambdaRole"
-  description = "Used by the controlshift-receive-webhook-handler Lambda for receiving db replication data from ControlShift"
+  name = "ReceiverLambdaRole"
+  description = "Used by the controlshift-webhook-handler Lambda for receiving db replication data from ControlShift"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
 
@@ -36,15 +36,15 @@ data "aws_iam_policy_document" "receiver_execution_policy" {
 }
 
 resource "aws_iam_role_policy" "lambda_accesses_code_bucket" {
-  name = "AllowsReceiverExecuton"
+  name = "AllowsReceiverExecution"
   role = aws_iam_role.receiver_lambda_role.id
   policy = data.aws_iam_policy_document.receiver_execution_policy.json
 }
 
 
 resource "aws_iam_role" "api_gateway_role" {
-  name = "ControlshiftAPIGatewayRole"
-  description = "Used by the API Gateway for CloudWatch logging"
+  name = "APIGatewayRole"
+  description = "Used by the Controlshift API Gateway webhook endpoint for CloudWatch logging"
   assume_role_policy = data.aws_iam_policy_document.gateway_assume_role.json
 }
 
@@ -65,13 +65,13 @@ resource "aws_iam_role_policy_attachment" "gateway_cloudwatch_logging" {
 }
 
 resource "aws_iam_role" "loader_lambda_role" {
-  name = "ControlshiftLoaderLambdaRole"
+  name = "LoaderLambdaRole"
   description = "Used by the controlshift-redshift-loader Lambda for processing db replication data from ControlShift into Redshift"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
 
 resource "aws_iam_role_policy" "lambda_loads_tables" {
-  name = "AllowsReceiverExecuton"
+  name = "AllowsLoaderExecution"
   role = aws_iam_role.loader_lambda_role.id
   policy = data.aws_iam_policy_document.loader_execution_policy.json
 }
