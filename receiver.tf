@@ -6,7 +6,7 @@ data "archive_file" "receiver_zip" {
 
 resource "aws_lambda_function" "receiver_lambda" {
   filename = data.archive_file.receiver_zip.output_path
-  function_name = "recieve-webhook-handler"
+  function_name = "controlshift-webhook-handler"
   role          = aws_iam_role.receiver_lambda_role.arn
   handler       = "receiver.handler"
   runtime       = "nodejs10.x"
@@ -21,7 +21,7 @@ resource "aws_lambda_function" "receiver_lambda" {
 }
 
 resource "aws_api_gateway_rest_api" "receiver" {
-  name = "webhook-receiver"
+  name = "controlshift-webhook-receiver"
   description = "Receives ControlShift webhooks and dumps them into an S3 bucket"
 
   endpoint_configuration {

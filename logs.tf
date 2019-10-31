@@ -8,7 +8,7 @@ resource "aws_cloudwatch_log_group" "loader" {
 }
 
 resource "aws_cloudwatch_log_group" "webhook" {
-  name = "/aws/lambda/recieve-webhook-handler"
+  name = "/aws/lambda/controlshift-webhook-handler"
   retention_in_days = 5
   tags = {
     Application = "controlshift-redshift"
