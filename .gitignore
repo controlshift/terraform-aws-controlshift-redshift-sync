@@ -7,5 +7,5 @@
 
 # .tfvars files
 *.tfvars
-receiver/receiver.zip
+lambdas/*.zip
 .idea/
