@@ -97,4 +97,5 @@ resource "aws_api_gateway_deployment" "deployment" {
 
 resource "aws_sqs_queue" "receiver_queue" {
   name = "controlshift-received-webhooks"
+  visibility_timeout_seconds = 900
 }

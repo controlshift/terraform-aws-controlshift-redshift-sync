@@ -62,7 +62,7 @@ data "aws_iam_policy_document" "processor_execution_policy" {
 
   statement {
     effect = "Allow"
-    actions = ["sqs:ReceiveMessage", "sqs:DeleteMessage", "GetQueueAttributes"]
+    actions = ["sqs:ReceiveMessage", "sqs:DeleteMessage", "sqs:GetQueueAttributes"]
     resources = ["arn:aws:sqs:${var.aws_region}:*:${aws_sqs_queue.receiver_queue.name}"]
   }
 }
