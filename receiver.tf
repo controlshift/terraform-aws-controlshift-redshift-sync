@@ -85,7 +85,7 @@ resource "aws_lambda_permission" "allow_api_gateway" {
 
 # for now, there is only one deployment
 resource "aws_api_gateway_deployment" "deployment" {
-  depends_on = ["aws_api_gateway_integration.request_method_integration", "aws_cloudwatch_log_group.api_gateway_log_retention"]
+  depends_on = ["aws_api_gateway_integration.request_method_integration"]
 
   rest_api_id = aws_api_gateway_rest_api.receiver.id
   stage_name  = "production"
