@@ -11,6 +11,7 @@ resource "aws_lambda_function" "process_lambda" {
   handler       = "process.handler"
   runtime       = "nodejs10.x"
   timeout       = 900
+  memory_size   = 256
   source_code_hash = filebase64sha256(data.archive_file.process_zip.output_path)
 
   environment {
