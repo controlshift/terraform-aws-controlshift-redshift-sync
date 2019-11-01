@@ -85,7 +85,7 @@ resource "aws_lambda_permission" "allow_api_gateway" {
 
 # for now, there is only one deployment
 resource "aws_api_gateway_deployment" "deployment" {
-  depends_on = ["aws_api_gateway_integration.request_method_integration"]
+  depends_on = ["aws_api_gateway_integration.request_method_integration", "aws_cloudwatch_log_group.api_gateway_log_retention"]
 
   rest_api_id = aws_api_gateway_rest_api.receiver.id
   stage_name  = "production"
@@ -98,4 +98,10 @@ resource "aws_api_gateway_deployment" "deployment" {
 resource "aws_sqs_queue" "receiver_queue" {
   name = "controlshift-received-webhooks"
   visibility_timeout_seconds = 900
+}
+
+# there is no formal way to associate this resource, beyond ensuring the name matches.
+resource "aws_cloudwatch_log_group" "api_gateway_log_retention" {
+  name              = "API-Gateway-Execution-Logs_${aws_api_gateway_rest_api.receiver.id}/${aws_api_gateway_deployment.deployment.stage_name}"
+  retention_in_days = 5
 }
