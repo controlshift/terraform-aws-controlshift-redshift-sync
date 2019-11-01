@@ -15,7 +15,33 @@ resource "aws_iam_role" "receiver_lambda_role" {
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
 
+resource "aws_iam_role" "processor_lambda_role" {
+  name = "ProcessorLambdaRole"
+  description = "Used by the controlshift-processor Lambda for writing table data into s3"
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
+}
+
 data "aws_iam_policy_document" "receiver_execution_policy" {
+  # allow the lambda to write cloudwatch logs
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = ["arn:aws:logs:*:*:*"]
+  }
+
+  # allow the lambda to enqueue work
+  statement {
+    effect = "Allow"
+    actions = ["sqs:SendMessage"]
+    resources = ["arn:aws:sqs:${var.aws_region}:*:${aws_sqs_queue.receiver_queue.name}"]
+  }
+}
+
+data "aws_iam_policy_document" "processor_execution_policy" {
   # allow the lambda to write cloudwatch logs
   statement {
     effect = "Allow"
@@ -33,14 +59,25 @@ data "aws_iam_policy_document" "receiver_execution_policy" {
     actions = ["s3:GetObject", "s3:PutObject"]
     resources = ["arn:aws:s3:::${aws_s3_bucket.receiver.bucket}/*"]
   }
+
+  statement {
+    effect = "Allow"
+    actions = ["sqs:ReceiveMessage", "sqs:DeleteMessage", "GetQueueAttributes"]
+    resources = ["arn:aws:sqs:${var.aws_region}:*:${aws_sqs_queue.receiver_queue.name}"]
+  }
 }
 
-resource "aws_iam_role_policy" "lambda_accesses_code_bucket" {
+resource "aws_iam_role_policy" "lambda_receiver" {
   name = "AllowsReceiverExecution"
   role = aws_iam_role.receiver_lambda_role.id
   policy = data.aws_iam_policy_document.receiver_execution_policy.json
 }
 
+resource "aws_iam_role_policy" "lambda_processor" {
+  name = "AllowsProcessorExecution"
+  role = aws_iam_role.processor_lambda_role.id
+  policy = data.aws_iam_policy_document.processor_execution_policy.json
+}
 
 resource "aws_iam_role" "api_gateway_role" {
   name = "APIGatewayRole"

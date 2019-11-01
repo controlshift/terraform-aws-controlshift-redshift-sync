@@ -6,8 +6,8 @@ data "archive_file" "process_zip" {
 
 resource "aws_lambda_function" "process_lambda" {
   filename = data.archive_file.process_zip.output_path
-  function_name = "controlshift-webhook-handler"
-  role          = aws_iam_role.receiver_lambda_role.arn
+  function_name = "controlshift-queue-processor"
+  role          = aws_iam_role.processor_lambda_role.arn
   handler       = "process.handler"
   runtime       = "nodejs10.x"
   timeout       = 900
@@ -16,7 +16,6 @@ resource "aws_lambda_function" "process_lambda" {
   environment {
     variables = {
       S3_BUCKET = aws_s3_bucket.receiver.bucket
-      AWS_REGION = var.aws_region
     }
   }
 }
@@ -25,4 +24,3 @@ resource "aws_lambda_event_source_mapping" "process_task" {
   event_source_arn = aws_sqs_queue.receiver_queue.arn
   function_name    = aws_lambda_function.process_lambda.arn
 }
-

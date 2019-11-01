@@ -16,14 +16,13 @@ resource "aws_lambda_function" "receiver_lambda" {
   environment {
     variables = {
       SQS_QUEUE_URL = aws_sqs_queue.receiver_queue.id
-      AWS_REGION = var.aws_region
     }
   }
 }
 
 resource "aws_api_gateway_rest_api" "receiver" {
   name = "controlshift-webhook-receiver"
-  description = "Receives ControlShift webhooks and dumps them into an S3 bucket"
+  description = "Receives ControlShift webhooks and dumps them onto an SQS queue"
 
   endpoint_configuration {
     types = ["REGIONAL"]
