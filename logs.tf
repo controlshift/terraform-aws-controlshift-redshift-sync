@@ -14,3 +14,11 @@ resource "aws_cloudwatch_log_group" "webhook" {
     Application = "controlshift-redshift"
   }
 }
+
+resource "aws_cloudwatch_log_group" "queue_processor" {
+  name = "/aws/lambda/controlshift-queue-processor"
+  retention_in_days = 5
+  tags = {
+    Application = "controlshift-redshift"
+  }
+}
