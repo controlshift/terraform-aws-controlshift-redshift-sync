@@ -1,7 +1,7 @@
 data "archive_file" "receiver_zip" {
   type        = "zip"
-  source_file = "${path.module}/receiver/receiver.js"
-  output_path = "${path.module}/receiver/receiver.zip"
+  source_file = "${path.module}/lambdas/receiver.js"
+  output_path = "${path.module}/lambdas/receiver.zip"
 }
 
 resource "aws_lambda_function" "receiver_lambda" {
@@ -15,14 +15,14 @@ resource "aws_lambda_function" "receiver_lambda" {
 
   environment {
     variables = {
-      S3_BUCKET = aws_s3_bucket.receiver.bucket
+      SQS_QUEUE_URL = aws_sqs_queue.receiver_queue.id
     }
   }
 }
 
 resource "aws_api_gateway_rest_api" "receiver" {
   name = "controlshift-webhook-receiver"
-  description = "Receives ControlShift webhooks and dumps them into an S3 bucket"
+  description = "Receives ControlShift webhooks and dumps them onto an SQS queue"
 
   endpoint_configuration {
     types = ["REGIONAL"]
@@ -93,4 +93,9 @@ resource "aws_api_gateway_deployment" "deployment" {
   variables = {
     "S3_BUCKET" = aws_s3_bucket.receiver.bucket
   }
+}
+
+resource "aws_sqs_queue" "receiver_queue" {
+  name = "controlshift-received-webhooks"
+  visibility_timeout_seconds = 900
 }
