@@ -11,7 +11,9 @@ async function processCsv(downloadUrl, table, kind) {
 
   try {
     const today = new Date();
-    const key = `${kind}/${table}/${today.getFullYear()}/${today.getMonth()}/${today.getDate()}/${today.getHours()}-${today.getMinutes()}-${today.getSeconds()}/table.csv`;
+    const keyParts =  [kind, table, today.getFullYear(), today.getMonth(), today.getDate(),
+      `${today.getHours()}-${today.getMinutes()}-${today.getSeconds()}`, 'table.csv'];
+    const key = keyParts.join('/');
     await copyToS3(downloadUrl, key);
     console.log("Successfully copied")
   }
