@@ -1,6 +1,8 @@
 'use strict';
 
 const https = require('https');
+const AWS = require('aws-sdk');
+
 const targetBucket = process.env.S3_BUCKET; // receiver bucket name
 const s3 = new AWS.S3();
 
