@@ -1,6 +1,6 @@
 data "archive_file" "process_zip" {
   type        = "zip"
-  source_file = "${path.module}/lambdas/process.js"
+  source_dir = "${path.module}/lambdas/"
   output_path = "${path.module}/lambdas/process.zip"
 }
 
@@ -24,4 +24,5 @@ resource "aws_lambda_function" "process_lambda" {
 resource "aws_lambda_event_source_mapping" "process_task" {
   event_source_arn = aws_sqs_queue.receiver_queue.arn
   function_name    = aws_lambda_function.process_lambda.arn
+  batch_size = 1
 }

@@ -1,6 +1,7 @@
 'use strict';
 
-const https = require('https');
+const request = require('request');
+const stream = require('stream');
 const AWS = require('aws-sdk');
 
 const targetBucket = process.env.S3_BUCKET; // receiver bucket name
@@ -22,29 +23,30 @@ async function processCsv(downloadUrl, table, kind) {
   }
 }
 
+const uploadStream = ({ key }) => {
+  const s3 = new AWS.S3();
+  const pass = new stream.PassThrough();
+  return {
+    writeStream: pass,
+    promise: s3.upload({ Bucket: targetBucket, Key: key, Body: pass }).promise(),
+  };
+};
+
 function copyToS3(url, key) {
-  return new Promise(function (resolve, reject) {
-    https.get(url, function onResponse(res) {
-      if (res.statusCode >= 300) {
-        reject(new Error('error ' + res.statusCode + ' retrieving ' + url));
-      }
-      s3.upload({Bucket: targetBucket, Key: key, Body: res}, function (err, data) {
-        if (err) {
-          reject(err)
-        }
-        resolve(data)
-      });
+  const { writeStream, promise } = uploadStream({key: key});
+  request({method: 'GET', uri: url, timeout: 900000, gzip: true})
+    .on('error', function(err) {
+      console.error(err)
     })
-      .on('error', function onError(err) {
-        reject(err);
-      });
-  })
+    .pipe(writeStream);
+  promise.then(console.log);
 }
 
-exports.handler = async function(event, context) {
+exports.handler =  async function(event, context) {
   event.Records.forEach(record => {
     const { body } = record;
     const params = JSON.parse(body);
+    console.log('Processing record in SQS: ' + body);
     processCsv(params['downloadUrl'], params['table'], params['kind']);
   });
   return {};

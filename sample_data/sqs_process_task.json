@@ -1,0 +1,20 @@
+{
+  "Records": [
+    {
+      "messageId": "19dd0b57-b21e-4ac1-bd88-01bbb068cb78",
+      "receiptHandle": "MessageReceiptHandle",
+      "body": "{\"type\":\"data.full_table_exported\",\"data\":{\"url\":\"https://agra-data-exports-staging.s3.amazonaws.com/default/signatures_20191105194346.csv?X-Amz-Algorithm=AWS4-HMAC-SHA256\\u0026X-Amz-Credential=ASIAUPZJ2B3HIVSHSTY3%2F20191105%2Fus-east-1%2Fs3%2Faws4_request\\u0026X-Amz-Date=20191105T194406Z\\u0026X-Amz-Expires=86400\\u0026X-Amz-SignedHeaders=host\\u0026X-Amz-Security-Token=IQoJb3JpZ2luX2VjEEwaCXVzLWVhc3QtMSJIMEYCIQDqr%2FjcGcTumLX%2FYpshDEnIZ4ZPHh5lIg3CTG6rLqyO1QIhAKfhW7wn2lQCWvxX9oJAPln%2BDllqMt2Yngsvt50124RjKtACCGUQABoMMzA4Nzg4NDY1MzU4IgwD7la1t8jN9SGhjm0qrQKk3itydSOYjq9Jn4zxokrTuQVp3CrALNGggNufzkbDCvxhMR8eJWudP7CZAgvP5PYyFBWl65jtJnUTKkoy%2Bcj7gpHTsMmObaFTw3DNOL317sMt9TxUcmDTaudFhj%2FlKWzMdEvnrVJiT2egcqk5GUapQgJv5%2BVQUhJU8Vd%2BFSfrbLDVz6GMy25fnXWv1cioRlEXBLeXAqKcuQGQScf1xq4nB8tuV0j4qj%2FabvGTXFyvIECErC%2FJ%2FuoPeXNrF%2Fvd4fWebJ%2BVfLwrm%2Fxi5FeVsOVTjemc5FkkQlfNplgU5aawsAI3C2%2Brcr8H6FDHwwVYDKrpox4nS5wbWo%2BhYoPD0%2FWGKXIyy6d6Jn%2BeGoKXia4uvl%2BJOsl6fizLtHhA5D8lp05o2QsF4QQJagh%2BVjgCMK6bh%2B4FOs4CkWjO95fdaJqkcDQxXr7S2u5gwhwaO%2FyPhZff2z2QiMWD341nprDFGstzf%2FyjiJtsGmLh0IWUq0mTEVEGuWKVAbSOPztIA8WRI%2Bg27nPzdmZuXdc%2F19Jn8zm8wNaki817TkOuktlI1V2J0UWhKA8o%2BmfGyD%2FvuV96a04IpfS92zTuzGS6vnayiNiTpDPraTZRkrjLu9lZ8rbulCPuZBuXHDk4lTQJrknd0949OJSL%2Bg%2FKPWPYgg9LUmh3D9MvPhRLStOmn6I4Zs26dBmCDiKDZ4wANT16BirSmZ6hhxY50ohS77DooAwPehEBFiytpiuxXxd1CqYq3fOAUh1gwAWsjNA2d46lRJJvxSlaPutoa1YVXalqhBSBsxycnzQITjZU9Ropo1mxWzKHiQ%2Be5sUjin0N5opepuj48GGH5%2B2wwXAOW35wu5UIwD2jjj2%2F0A%3D%3D\\u0026X-Amz-Signature=9692ada25adf3b92d8ad74eb790edd68f337d34d9fface926be45ff857e2059d\",\"table\":\"signatures\"},\"jid\":\"3bae68e1c1c6b418e1a855ec\"}\n",
+      "attributes": {
+        "ApproximateReceiveCount": "1",
+        "SentTimestamp": "1523232000000",
+        "SenderId": "123456789012",
+        "ApproximateFirstReceiveTimestamp": "1523232000001"
+      },
+      "messageAttributes": {},
+      "md5OfBody": "7b270e59b47ff90a553787216d55d91d",
+      "eventSource": "aws:sqs",
+      "eventSourceARN": "arn:aws:sqs:us-east-1:123456789012:MyQueue",
+      "awsRegion": "us-east-1"
+    }
+  ]
+}
