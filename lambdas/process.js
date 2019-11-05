@@ -7,7 +7,7 @@ const AWS = require('aws-sdk');
 const targetBucket = process.env.S3_BUCKET; // receiver bucket name
 const s3 = new AWS.S3();
 
-async function processCsv(downloadUrl, table, kind) {
+function processCsv(downloadUrl, table, kind) {
   console.log("Processing: " + downloadUrl);
 
   try {
@@ -15,7 +15,7 @@ async function processCsv(downloadUrl, table, kind) {
     const keyParts =  [kind, table, today.getFullYear(), today.getMonth(), today.getDate(),
       `${today.getHours()}-${today.getMinutes()}-${today.getSeconds()}`, 'table.csv'];
     const key = keyParts.join('/');
-    await copyToS3(downloadUrl, key);
+    copyToS3(downloadUrl, key);
     console.log("Successfully copied")
   }
   catch(err){
@@ -34,7 +34,7 @@ const uploadStream = ({ key }) => {
 
 function copyToS3(url, key) {
   const { writeStream, promise } = uploadStream({key: key});
-  request({method: 'GET', uri: url, timeout: 900000, gzip: true})
+  request({method: 'GET', uri: url, timeout: 5000, gzip: true})
     .on('error', function(err) {
       console.error(err)
     })
@@ -42,7 +42,7 @@ function copyToS3(url, key) {
   promise.then(console.log);
 }
 
-exports.handler =  async function(event, context) {
+exports.handler =  function(event, context) {
   event.Records.forEach(record => {
     const { body } = record;
     const params = JSON.parse(body);
