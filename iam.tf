@@ -60,6 +60,12 @@ data "aws_iam_policy_document" "processor_execution_policy" {
     resources = ["arn:aws:s3:::${aws_s3_bucket.receiver.bucket}/*"]
   }
 
+  statement {
+    effect = "Allow"
+    actions = ["s3:GetObject"]
+    resources = ["*"]
+  }
+
   # allow lambda to be wired up to the queue. These are the minimum permissions for the SQS Lambda Executor.
   statement {
     effect = "Allow"

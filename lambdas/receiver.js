@@ -8,12 +8,17 @@ AWS.config.update({region: process.env.AWS_REGION});
 // Create an SQS service object
 const sqs = new AWS.SQS({apiVersion: '2012-11-05'});
 
-function enqueueTask(downloadUrl, table, kind) {
-  console.log("Processing: " + downloadUrl);
+function enqueueTask(receivedData, kind) {
+  console.log("Processing: " + receivedData.url);
 
   let messageBody = {};
-  messageBody['downloadUrl'] = downloadUrl;
-  messageBody['table'] = table;
+  messageBody['downloadUrl'] = receivedData.url;
+  messageBody['table'] = receivedData.table;
+
+  if (receivedData['s3'] !== undefined) {
+    messageBody['s3'] = receivedData['s3'];
+  }
+
   messageBody['kind'] =  kind;
 
   const params = {
@@ -47,9 +52,9 @@ exports.handler = async (event) => {
     let receivedJSON = JSON.parse(event.body);
     console.log('Received event:', receivedJSON);
     if(receivedJSON.type === 'data.full_table_exported'){
-        return enqueueTask(receivedJSON.data.url, receivedJSON.data.table, 'full');
+        return enqueueTask(receivedJSON.data, 'full');
     } else if(receivedJSON.type === 'data.incremental_table_exported'){
-        return enqueueTask(receivedJSON.data.url, receivedJSON.data.table, 'incremental');
+        return enqueueTask(receivedJSON.data, 'incremental');
     } else {
         return Promise.resolve(sendResponse({"status": "skipped", "payload": receivedJSON}));
     }
