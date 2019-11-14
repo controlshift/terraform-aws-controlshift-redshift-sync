@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "loader" {
   s3_bucket = "changesprout-public"
-  s3_key = "LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.7.2.zip"
+  s3_key = "LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.7.3.zip"
   function_name = "controlshift-redshift-loader"
   role          = aws_iam_role.loader_lambda_role.arn
   handler       = "index.handler"
