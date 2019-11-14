@@ -6,7 +6,7 @@ const AWS = require('aws-sdk');
 AWS.config.update({region: process.env.AWS_REGION});
 
 // Create an SQS service object
-const sqs = new AWS.SQS({apiVersion: '2012-11-05'});
+const sqs = new AWS.SQS();
 
 function enqueueTask(receivedData, kind) {
   console.log("Processing: " + receivedData.url);
@@ -26,14 +26,19 @@ function enqueueTask(receivedData, kind) {
     QueueUrl: process.env.SQS_QUEUE_URL
   };
 
-  sqs.sendMessage(params, function (err, data) {
-    if (err) {
-      console.log("Error", err);
-    } else {
-      console.log("Success", data.MessageId);
+  console.log('Enqueueing ' + JSON.stringify(messageBody) + ' on ' +  process.env.SQS_QUEUE_URL);
+
+  let resp = sqs.sendMessage(params).promise();
+
+  resp.then(
+    function(data) {
+      console.log("Success " + data.MessageId);
+    },
+    function(error) {
+      console.log("Error", error);
     }
-  });
-  return sendResponse({"status": "processed"})
+  );
+  return resp
 }
 
 function sendResponse(body) {
@@ -52,10 +57,12 @@ exports.handler = async (event) => {
     let receivedJSON = JSON.parse(event.body);
     console.log('Received event:', receivedJSON);
     if(receivedJSON.type === 'data.full_table_exported'){
-        return enqueueTask(receivedJSON.data, 'full');
+      await enqueueTask(receivedJSON.data, 'full');
+      return sendResponse({"status": "processed"});
     } else if(receivedJSON.type === 'data.incremental_table_exported'){
-        return enqueueTask(receivedJSON.data, 'incremental');
+      await enqueueTask(receivedJSON.data, 'incremental');
+      return sendResponse({"status": "processed"});
     } else {
-        return Promise.resolve(sendResponse({"status": "skipped", "payload": receivedJSON}));
+      return Promise.resolve(sendResponse({"status": "skipped", "payload": receivedJSON}));
     }
 };

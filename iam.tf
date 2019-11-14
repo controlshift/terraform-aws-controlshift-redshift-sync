@@ -15,12 +15,6 @@ resource "aws_iam_role" "receiver_lambda_role" {
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
 
-resource "aws_iam_role" "processor_lambda_role" {
-  name = "ProcessorLambdaRole"
-  description = "Used by the controlshift-processor Lambda for writing table data into s3"
-  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
-}
-
 data "aws_iam_policy_document" "receiver_execution_policy" {
   # allow the lambda to write cloudwatch logs
   statement {
@@ -41,49 +35,10 @@ data "aws_iam_policy_document" "receiver_execution_policy" {
   }
 }
 
-data "aws_iam_policy_document" "processor_execution_policy" {
-  # allow the lambda to write cloudwatch logs
-  statement {
-    effect = "Allow"
-    actions = [
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-      "logs:PutLogEvents"
-    ]
-    resources = ["arn:aws:logs:*:*:*"]
-  }
-
-  # allow the lambda to put files into the receiver bucket
-  statement {
-    effect = "Allow"
-    actions = ["s3:GetObject", "s3:PutObject"]
-    resources = ["arn:aws:s3:::${aws_s3_bucket.receiver.bucket}/*"]
-  }
-
-  statement {
-    effect = "Allow"
-    actions = ["s3:GetObject"]
-    resources = ["*"]
-  }
-
-  # allow lambda to be wired up to the queue. These are the minimum permissions for the SQS Lambda Executor.
-  statement {
-    effect = "Allow"
-    actions = ["sqs:ReceiveMessage", "sqs:DeleteMessage", "sqs:GetQueueAttributes"]
-    resources = ["arn:aws:sqs:${var.aws_region}:*:${aws_sqs_queue.receiver_queue.name}"]
-  }
-}
-
 resource "aws_iam_role_policy" "lambda_receiver" {
   name = "AllowsReceiverExecution"
   role = aws_iam_role.receiver_lambda_role.id
   policy = data.aws_iam_policy_document.receiver_execution_policy.json
-}
-
-resource "aws_iam_role_policy" "lambda_processor" {
-  name = "AllowsProcessorExecution"
-  role = aws_iam_role.processor_lambda_role.id
-  policy = data.aws_iam_policy_document.processor_execution_policy.json
 }
 
 resource "aws_iam_role" "api_gateway_role" {
@@ -159,11 +114,17 @@ data "aws_iam_policy_document" "loader_execution_policy" {
       "s3:List*",
     ]
     resources = [
-      aws_s3_bucket.receiver.arn,
       aws_s3_bucket.manifest.arn,
-      "${aws_s3_bucket.receiver.arn}/*",
       "${aws_s3_bucket.manifest.arn}/*"
     ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = ["s3:GetObject", "s3:ListBucket"]
+    resources = [
+      "arn:aws:s3:::agra-data-exports-${var.controlshift_environment}",
+      "arn:aws:s3:::agra-data-exports-${var.controlshift_environment}/*"]
   }
 
   statement {
@@ -188,5 +149,12 @@ data "aws_iam_policy_document" "loader_execution_policy" {
       "logs:PutLogEvents"
     ]
     resources = ["arn:aws:logs:*:*:*"]
+  }
+
+  # allow lambda to be wired up to the queue. These are the minimum permissions for the SQS Lambda Executor.
+  statement {
+    effect = "Allow"
+    actions = ["sqs:ReceiveMessage", "sqs:DeleteMessage", "sqs:GetQueueAttributes"]
+    resources = ["arn:aws:sqs:${var.aws_region}:*:${aws_sqs_queue.receiver_queue.name}"]
   }
 }

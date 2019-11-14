@@ -9,3 +9,4 @@
 *.tfvars
 lambdas/*.zip
 .idea/
+.DS_Store
