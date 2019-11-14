@@ -46,7 +46,7 @@ data "template_file" "loader_config_full_item" {
     redshift_username = var.redshift_username
     redshift_password = aws_kms_ciphertext.redshift_password.ciphertext_blob
     schema = var.redshift_schema
-    s3_bucket = aws_s3_bucket.receiver.bucket
+    s3_bucket = "agra-data-exports-${var.controlshift_environment}"
     manifest_bucket = aws_s3_bucket.manifest.bucket
     manifest_prefix = var.manifest_prefix
     failed_manifest_prefix = var.failed_manifest_prefix
@@ -92,7 +92,7 @@ data "template_file" "loader_config_incremental_item" {
     redshift_username = var.redshift_username
     redshift_password = aws_kms_ciphertext.redshift_password.ciphertext_blob
     schema = var.redshift_schema
-    s3_bucket = aws_s3_bucket.receiver.bucket
+    s3_bucket = "agra-data-exports-${var.controlshift_environment}"
     manifest_bucket = aws_s3_bucket.manifest.bucket
     manifest_prefix = var.manifest_prefix
     failed_manifest_prefix = var.failed_manifest_prefix
