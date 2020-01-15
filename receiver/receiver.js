@@ -13,10 +13,10 @@ async function processCsv(downloadUrl, table, kind) {
       const today = new Date();
       const key = `${kind}/${table}/${today.getFullYear()}/${today.getMonth()}/${today.getDate()}/${today.getHours()}-${today.getMinutes()}-${today.getSeconds()}/table.csv`;
       await copyToS3(downloadUrl, key);
-      console.log("Successfully copied")
+      console.log(`Successfully copied ${downloadUrl} to ${key}`)
     }
     catch(err){
-      console.log(`Failed: ${err.message}`)
+      console.log(`Failed: ${err.message} (${downloadUrl})`)
     }
     finally{
       return sendResponse({"status": "processed"})
@@ -55,7 +55,8 @@ function sendResponse(body) {
 
 // Lambda event Handler
 exports.handler = async (event) => {
-    let receivedJSON = JSON.parse(event.body);
+    // let receivedJSON = JSON.parse(event.body);
+    let receivedJSON = event.body;
     console.log('Received event:', receivedJSON);
     if(receivedJSON.type === 'data.full_table_exported'){
         return processCsv(receivedJSON.data.url, receivedJSON.data.table, 'full');
