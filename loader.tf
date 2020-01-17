@@ -20,14 +20,14 @@ resource "aws_lambda_event_source_mapping" "process_task" {
 }
 
 resource "aws_sns_topic" "success_sns_topic" {
-  depends_on = ["aws_lambda_function.loader"]
+  depends_on = [aws_lambda_function.loader]
 
   name = var.success_topic_name
   policy = data.aws_iam_policy_document.success_sns_notification_policy.json
 }
 
 resource "aws_sns_topic" "failure_sns_topic" {
-  depends_on = ["aws_lambda_function.loader"]
+  depends_on = [aws_lambda_function.loader]
 
   name = var.failure_topic_name
   policy = data.aws_iam_policy_document.failure_sns_notification_policy.json
