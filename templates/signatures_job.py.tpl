@@ -22,12 +22,11 @@ datasource0 = glueContext.create_dynamic_frame.from_catalog(database = "default_
 
 
 ########### Is this what we want????
-#latestpartition = datasource0.toDF().agg(func.max("partition_0").alias("last_partition")).collect()[0]["last_partition"]
-latestpartition = '20200116'
+latestpartition = datasource0.toDF().agg(func.max("partition_0").alias("last_partition")).collect()[0]["last_partition"]
 datasource1 = glueContext.create_dynamic_frame.from_catalog(
     database = "default_staging",
     table_name = "signatures",
-    push_down_predicate = "(partition_0 == '{latestpartition}')",
+    push_down_predicate = f"(partition_0 == {latestpartition})",
     transformation_ctx = "datasource1")
 ##############
 
