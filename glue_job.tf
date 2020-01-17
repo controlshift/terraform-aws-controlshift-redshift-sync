@@ -1,6 +1,5 @@
 resource "aws_s3_bucket" "glue_script" {
-  # TODO
-  bucket = "aws-glue-scripts-087959666724-us-west-1"
+  bucket = var.glue_scripts_bucket_name
 }
 
 data "template_file" "signatures_script" {
