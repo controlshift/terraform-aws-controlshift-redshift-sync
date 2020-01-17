@@ -1,3 +1,31 @@
+resource "aws_glue_catalog_database" "catalog_db" {
+  name = "controlshift_${var.controlshift_environment}"
+}
+
+locals {
+  # TODO: "default" here needs to be the org slug, but we don't have a variable for that yet
+  signatures_s3_path = "s3://agra-data-exports-${var.controlshift_environment}/default/full/signatures"
+}
+
+resource "aws_glue_catalog_table" "signatures" {
+  name = "signatures"
+  database_name = aws_glue_catalog_database.catalog_db.name
+
+  storage_descriptor {
+    location = local.signatures_s3_path
+  }
+}
+
+resource "aws_glue_crawler" "signatures_crawler" {
+  database_name = aws_glue_catalog_database.catalog_db.name
+  name = "${var.controlshift_environment}_full_signatures"
+  role = aws_iam_role.glue_service_role.arn
+
+  s3_target {
+    path = local.signatures_s3_path
+  }
+}
+
 resource "aws_s3_bucket" "glue_script" {
   bucket = var.glue_scripts_bucket_name
 }
