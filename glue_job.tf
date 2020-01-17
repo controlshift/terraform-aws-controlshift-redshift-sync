@@ -32,7 +32,9 @@ resource "aws_s3_bucket" "glue_script" {
 
 data "template_file" "signatures_script" {
   template = file("${path.module}/templates/signatures_job.py.tpl")
-  vars = {}
+  vars = {
+    database_name = aws_glue_catalog_database.catalog_db.name
+  }
 }
 
 resource "aws_s3_bucket_object" "signatures_script" {
