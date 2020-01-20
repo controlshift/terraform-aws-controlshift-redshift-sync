@@ -30,10 +30,6 @@ variable "redshift_schema" {
   description = "The redshift schema to load tables into"
 }
 
-variable "receiver_bucket_name" {
-  type        = string
-  description = "Your S3 bucket name ingest CSVs will be stored in"
-}
 variable "manifest_bucket_name" {
   type        = string
   description = "Your S3 bucket name to store manifests of ingests processed in"
@@ -79,4 +75,9 @@ variable "controlshift_environment" {
   default = "production"
   type        = string
   description = "The environment of your ControlShift instance. Either staging or production"
+}
+
+variable "controlshift_organization_slug" {
+  type = string
+  description = "The organization's slug in ControlShift platform. Ask support team (support@controlshiftlabs.com) to find this value."
 }
