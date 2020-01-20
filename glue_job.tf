@@ -3,8 +3,7 @@ resource "aws_glue_catalog_database" "catalog_db" {
 }
 
 locals {
-  # TODO: "default" here needs to be the org slug, but we don't have a variable for that yet
-  signatures_s3_path = "s3://agra-data-exports-${var.controlshift_environment}/default/full/signatures"
+  signatures_s3_path = "s3://agra-data-exports-${var.controlshift_environment}/${var.controlshift_organization_slug}/full/signatures"
 }
 
 resource "aws_glue_catalog_table" "signatures" {
@@ -26,7 +25,7 @@ resource "aws_glue_crawler" "signatures_crawler" {
   }
 }
 
-resource "aws_s3_bucket" "glue_script" {
+resource "aws_s3_bucket" "glue_resources" {
   bucket = var.glue_scripts_bucket_name
 }
 
@@ -38,7 +37,7 @@ data "template_file" "signatures_script" {
 }
 
 resource "aws_s3_bucket_object" "signatures_script" {
-  bucket = aws_s3_bucket.glue_script.id
+  bucket = aws_s3_bucket.glue_resources.id
   key = "${var.controlshift_environment}/signatures_job.py"
   acl = "private"
 
@@ -62,15 +61,57 @@ data "aws_iam_policy_document" "glue_assume_role" {
   }
 }
 
+resource "aws_iam_role_policy_attachment" "glue_resources" {
+  role       = aws_iam_role.glue_service_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+}
+
+# TODO: Use more restrictive permissions (?)
+resource "aws_iam_role_policy_attachment" "redshift_full_access" {
+  role       = aws_iam_role.glue_service_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonRedshiftFullAccess"
+}
+
+resource "aws_iam_role_policy" "controlshift_data_export_bucket_access" {
+  name = "AllowsCrossAccountAccessToControlShiftDataExportBucket"
+  role = aws_iam_role.glue_service_role.id
+  policy = data.aws_iam_policy_document.controlshift_data_export_bucket.json
+}
+
+# TODO: Use more restrictive permissions (?)
+data "aws_iam_policy_document" "controlshift_data_export_bucket" {
+  statement {
+    effect = "Allow"
+    actions = [ "s3:*" ]
+    resources = [
+      "arn:aws:s3:::agra-data-exports-${var.controlshift_environment}/${var.controlshift_organization_slug}/*"
+    ]
+  }
+}
+
+resource "aws_glue_connection" "redshift_connection" {
+  connection_properties = {
+    JDBC_CONNECTION_URL = "jdbc:redshift://${var.redshift_dns_name}:${var.redshift_port}/${var.redshift_database_name}"
+    PASSWORD            = "${var.redshift_username}"
+    USERNAME            = "${var.redshift_password}"
+  }
+
+  name = "controlshift_${var.controlshift_environment}_data_sync"
+}
+
 # TODO: give glue_service_role some permissions as currently held by
 #       AWSGlueServiceRole-ManualTest
 
 resource "aws_glue_job" "signatures_full" {
   name = "cs-${var.controlshift_environment}-signatures-full"
+  connections = [ aws_glue_connection.redshift_connection ]
+  glue_version = "1.0"
+  default_arguments = { "--TempDir": "s3://${aws_s3_bucket.glue_resources.bucket}/${var.controlshift_environment}/temp" }
 
   role_arn = aws_iam_role.glue_service_role.arn
 
   command {
-    script_location = "s3://${aws_s3_bucket.glue_script.bucket}/${var.controlshift_environment}/signatures_job.py"
+    script_location = "s3://${aws_s3_bucket.glue_resources.bucket}/${var.controlshift_environment}/signatures_job.py"
+    python_version = "3"
   }
 }
