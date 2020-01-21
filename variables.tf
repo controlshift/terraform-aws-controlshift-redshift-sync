@@ -32,6 +32,11 @@ variable "redshift_security_group_id" {
   description = "The security group assigned to the Redshift cluster that will be used for connecting by Glue. For requirements on this Security Group see https://docs.aws.amazon.com/glue/latest/dg/setup-vpc-for-glue-access.html"
 }
 
+variable "redshift_subnet_id" {
+  type = string
+  description = "The ID of one of Redshift's cluster subnet group that Glue will use to connect"
+}
+
 variable "manifest_bucket_name" {
   type        = string
   description = "Your S3 bucket name to store manifests of ingests processed in"
