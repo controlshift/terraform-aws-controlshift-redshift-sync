@@ -89,18 +89,25 @@ data "aws_iam_policy_document" "controlshift_data_export_bucket" {
   }
 }
 
+data "aws_subnet" "redshift_subnet" {
+  id = "${data.aws_redshift_cluster.sync_data_target.cluster_subnet_group_name}"
+}
+
 resource "aws_glue_connection" "redshift_connection" {
+  name = "controlshift_${var.controlshift_environment}_data_sync"
+
   connection_properties = {
-    JDBC_CONNECTION_URL = "jdbc:redshift://${var.redshift_dns_name}:${var.redshift_port}/${var.redshift_database_name}"
+    JDBC_CONNECTION_URL = "jdbc:redshift://${data.aws_redshift_cluster.sync_data_target.endpoint}:${data.aws_redshift_cluster.sync_data_target.port}/${var.redshift_database_name}"
     PASSWORD            = "${var.redshift_username}"
     USERNAME            = "${var.redshift_password}"
   }
 
-  name = "controlshift_${var.controlshift_environment}_data_sync"
+  physical_connection_requirements {
+    availability_zone      = "${data.aws_subnet.redshift_subnet.availability_zone}"
+    security_group_id_list = [ "${var.redshift_security_group_id}" ]
+    subnet_id              = "${data.aws_subnet.redshift_subnet.id}"
+  }
 }
-
-# TODO: give glue_service_role some permissions as currently held by
-#       AWSGlueServiceRole-ManualTest
 
 resource "aws_glue_job" "signatures_full" {
   name = "cs-${var.controlshift_environment}-signatures-full"
