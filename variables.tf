@@ -4,15 +4,12 @@ variable "aws_region" {
   description = "The AWS Region to use. Should match the location of your Redshift instance"
 }
 
+variable "redshift_cluster_identifier" {
+  type = string
+  description = "The target Redshift cluster ID"
+}
+
 variable "redshift_database_name" {
-  type = string
-}
-
-variable "redshift_dns_name" {
-  type = string
-}
-
-variable "redshift_port" {
   type = string
 }
 
@@ -27,7 +24,12 @@ variable "redshift_password" {
 variable "redshift_schema" {
   type  = string
   default = "public"
-  description = "The redshift schema to load tables into"
+  description = "The Redshift schema to load tables into"
+}
+
+variable "redshift_security_group_id" {
+  type = string
+  description = "The security group assigned to the Redshift cluster that will be used for connecting by Glue. For requirements on this Security Group see https://docs.aws.amazon.com/glue/latest/dg/setup-vpc-for-glue-access.html"
 }
 
 variable "manifest_bucket_name" {
