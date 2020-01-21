@@ -89,7 +89,7 @@ data "aws_iam_policy_document" "controlshift_data_export_bucket" {
 }
 
 data "aws_subnet" "redshift_subnet" {
-  id = "${data.aws_redshift_cluster.sync_data_target.cluster_subnet_group_name}"
+  id = var.redshift_subnet_id
 }
 
 resource "aws_glue_connection" "redshift_connection" {
@@ -97,20 +97,20 @@ resource "aws_glue_connection" "redshift_connection" {
 
   connection_properties = {
     JDBC_CONNECTION_URL = "jdbc:redshift://${data.aws_redshift_cluster.sync_data_target.endpoint}:${data.aws_redshift_cluster.sync_data_target.port}/${var.redshift_database_name}"
-    PASSWORD            = "${var.redshift_username}"
-    USERNAME            = "${var.redshift_password}"
+    PASSWORD            = var.redshift_username
+    USERNAME            = var.redshift_password
   }
 
   physical_connection_requirements {
-    availability_zone      = "${data.aws_subnet.redshift_subnet.availability_zone}"
-    security_group_id_list = [ "${var.redshift_security_group_id}" ]
-    subnet_id              = "${data.aws_subnet.redshift_subnet.id}"
+    availability_zone      = data.aws_subnet.redshift_subnet.availability_zone
+    security_group_id_list = [ var.redshift_security_group_id ]
+    subnet_id              = data.aws_subnet.redshift_subnet.id
   }
 }
 
 resource "aws_glue_job" "signatures_full" {
   name = "cs-${var.controlshift_environment}-signatures-full"
-  connections = [ aws_glue_connection.redshift_connection ]
+  connections = [ aws_glue_connection.redshift_connection.id ]
   glue_version = "1.0"
   default_arguments = { "--TempDir": "s3://${aws_s3_bucket.glue_resources.bucket}/${var.controlshift_environment}/temp" }
 
