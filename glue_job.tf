@@ -27,6 +27,16 @@ resource "aws_glue_crawler" "signatures_crawler" {
 
 resource "aws_s3_bucket" "glue_resources" {
   bucket = var.glue_scripts_bucket_name
+  region = var.aws_region
+
+  acl = "private"
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
 }
 
 data "template_file" "signatures_script" {
