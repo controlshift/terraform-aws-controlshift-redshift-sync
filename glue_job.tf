@@ -6,15 +6,6 @@ locals {
   signatures_s3_path = "s3://agra-data-exports-${var.controlshift_environment}/${var.controlshift_organization_slug}/full/signatures"
 }
 
-resource "aws_glue_catalog_table" "signatures" {
-  name = "signatures"
-  database_name = aws_glue_catalog_database.catalog_db.name
-
-  storage_descriptor {
-    location = local.signatures_s3_path
-  }
-}
-
 resource "aws_glue_crawler" "signatures_crawler" {
   database_name = aws_glue_catalog_database.catalog_db.name
   name = "${var.controlshift_environment}_full_signatures"
@@ -107,8 +98,8 @@ resource "aws_glue_connection" "redshift_connection" {
 
   connection_properties = {
     JDBC_CONNECTION_URL = "jdbc:redshift://${data.aws_redshift_cluster.sync_data_target.endpoint}:${data.aws_redshift_cluster.sync_data_target.port}/${var.redshift_database_name}"
-    PASSWORD            = var.redshift_username
-    USERNAME            = var.redshift_password
+    PASSWORD            = var.redshift_password
+    USERNAME            = var.redshift_username
   }
 
   physical_connection_requirements {
@@ -131,3 +122,5 @@ resource "aws_glue_job" "signatures_full" {
     python_version = "3"
   }
 }
+
+// TODO: Add S3 VPC endpoint
