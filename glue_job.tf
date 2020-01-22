@@ -112,9 +112,13 @@ resource "aws_glue_connection" "redshift_connection" {
 
 resource "aws_glue_job" "signatures_full" {
   name = "cs-${var.controlshift_environment}-signatures-full"
-  connections = [ aws_glue_connection.redshift_connection.id ]
+  connections = [ aws_glue_connection.redshift_connection.name ]
   glue_version = "1.0"
-  default_arguments = { "--TempDir": "s3://${aws_s3_bucket.glue_resources.bucket}/${var.controlshift_environment}/temp" }
+  default_arguments = {
+    "--TempDir": "s3://${aws_s3_bucket.glue_resources.bucket}/${var.controlshift_environment}/temp",
+    "--job-bookmark-option": "job-bookmark-disable",
+    "--job-language": "python"
+  }
 
   role_arn = aws_iam_role.glue_service_role.arn
 
