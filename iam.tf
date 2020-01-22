@@ -103,7 +103,9 @@ data "aws_iam_policy_document" "loader_execution_policy" {
       "kms:GetKeyPolicy",
       "kms:Decrypt"
     ]
-    resources = ["*"]
+    resources = [
+      aws_kms_key.lambda_config.arn
+    ]
   }
 
   statement {
@@ -138,7 +140,10 @@ data "aws_iam_policy_document" "loader_execution_policy" {
       "sns:Subscribe",
       "sns:Unsubscribe"
     ]
-    resources = ["*"]
+    resources = [
+      aws_sns_topic.success_sns_topic.arn,
+      aws_sns_topic.failure_sns_topic.arn
+    ]
   }
 
   statement {
