@@ -10,18 +10,13 @@ const glue = new AWS.Glue();
 const jobName = 'glue-job-name';
 
 exports.handler = async function(event, context) {
-  event.Records.forEach(record => {
-    const { body } = record;
-    console.log(body);
-
-    glue.startJobRun({JobName: jobName}, function(error, data) {
-      if(error) {
-        console.log(error, error.stack);
-      } else {
-        console.log(data);
-      }
-    });
-
+  glue.startJobRun({JobName: jobName}, function(error, data) {
+    if(error) {
+      console.log(error, error.stack);
+    } else {
+      console.log(data);
+    }
   });
+
   return {};
 };
