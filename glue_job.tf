@@ -93,6 +93,11 @@ data "aws_subnet" "redshift_subnet" {
   id = var.redshift_subnet_id
 }
 
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id       = data.aws_subnet.redshift_subnet.vpc_id
+  service_name = "com.amazonaws.${var.aws_region}.s3"
+}
+
 resource "aws_glue_connection" "redshift_connection" {
   name = "controlshift_${var.controlshift_environment}_data_sync"
 
@@ -126,5 +131,3 @@ resource "aws_glue_job" "signatures_full" {
     python_version = "3"
   }
 }
-
-// TODO: Add S3 VPC endpoint
