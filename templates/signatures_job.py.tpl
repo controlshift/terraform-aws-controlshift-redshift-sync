@@ -110,12 +110,12 @@ dropnullfields3 = DropNullFields.apply(frame = resolvechoice2, transformation_ct
 
 # Step 6: Write the transformed data into Redshift, replacing whatever data was in the redshift table previously
 ## @type: DataSink
-## @args: [catalog_connection = "moveon_data_sync_redshift_test", connection_options = {"dbtable": "signatures", "database": "${redshift_database_name}"}, redshift_tmp_dir = TempDir, transformation_ctx = "datasink4"]
+## @args: [catalog_connection = "${redshift_connection_name}", connection_options = {"dbtable": "signatures", "database": "${redshift_database_name}"}, redshift_tmp_dir = TempDir, transformation_ctx = "datasink4"]
 ## @return: datasink4
 ## @inputs: [frame = dropnullfields3]
 datasink4 = glueContext.write_dynamic_frame.from_jdbc_conf(
     frame = dropnullfields3,
-    catalog_connection = "moveon_data_sync_redshift_test",
+    catalog_connection = "${redshift_connection_name}",
     connection_options = {"preactions": "truncate table signatures;",
                           "dbtable": "signatures",
                           "database": "${redshift_database_name}"},
