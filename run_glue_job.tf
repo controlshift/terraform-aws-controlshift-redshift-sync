@@ -1,6 +1,19 @@
+data "template_file" "run_glue_job_script" {
+  template = file("${path.module}/templates/run-glue-job.js.tpl")
+
+  vars = {
+    glue_job_name = aws_glue_job.signatures_full.id
+  }
+}
+
 data "archive_file" "run_glue_job_zip" {
   type        = "zip"
-  source_file = "${path.module}/lambdas/run-glue-job.js"
+
+   source {
+    content  = "${data.template_file.run_glue_job_script.rendered}"
+    filename = "run-glue-job.js"
+  }
+
   output_path = "${path.module}/lambdas/run-glue-job.zip"
 }
 
