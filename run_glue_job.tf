@@ -11,7 +11,7 @@ data "archive_file" "run_glue_job_zip" {
 
    source {
     content  = "${data.template_file.run_glue_job_script.rendered}"
-    filename = "run-glue-job.js"
+    filename = "index.js"
   }
 
   output_path = "${path.module}/lambdas/run-glue-job.zip"
@@ -20,9 +20,9 @@ data "archive_file" "run_glue_job_zip" {
 resource "aws_lambda_function" "glue_lambda" {
   filename = data.archive_file.run_glue_job_zip.output_path
   function_name = "controlshift-run-glue-job"
-  role          = aws_iam_role.receiver_lambda_role.arn
-  handler       = "receiver.handler"
-  runtime       = "nodejs10.x"
+  role          = aws_iam_role.run_glue_job_lambda_role.arn
+  handler       = "index.handler"
+  runtime       = "nodejs12.x"
   timeout       = 60
   source_code_hash = filebase64sha256(data.archive_file.run_glue_job_zip.output_path)
 }
