@@ -163,3 +163,35 @@ data "aws_iam_policy_document" "loader_execution_policy" {
     resources = ["arn:aws:sqs:${var.aws_region}:*:${aws_sqs_queue.receiver_queue.name}"]
   }
 }
+
+data "aws_iam_policy_document" "run_glue_job_execution_policy" {
+  # allow the lambda to write cloudwatch logs
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = ["arn:aws:logs:*:*:*"]
+  }
+
+  # allow the lambda to enqueue work
+  statement {
+    effect = "Allow"
+    actions = [ "glue:StartJobRun" ]
+    resources = [ aws_glue_job.signatures_full.arn ]
+  }
+}
+
+resource "aws_iam_role_policy" "lambda_run_glue_job" {
+  name = "AllowsRunGlueJobExecution"
+  role = aws_iam_role.run_glue_job_lambda_role.id
+  policy = data.aws_iam_policy_document.run_glue_job_execution_policy.json
+}
+
+resource "aws_iam_role" "run_glue_job_lambda_role" {
+  name = "RunGlueJobLambdaRole"
+  description = "Used by the controlshift-run-glue-job Lambda for triggering AWS Glue job once the crawler finishes"
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
+}
