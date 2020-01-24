@@ -107,6 +107,7 @@ resource "aws_glue_connection" "redshift_connection" {
     JDBC_CONNECTION_URL = "jdbc:redshift://${data.aws_redshift_cluster.sync_data_target.endpoint}:${data.aws_redshift_cluster.sync_data_target.port}/${var.redshift_database_name}"
     PASSWORD            = var.redshift_password
     USERNAME            = var.redshift_username
+    JDBC_ENFORCE_SSL    = false
   }
 
   physical_connection_requirements {
