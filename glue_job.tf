@@ -33,7 +33,8 @@ resource "aws_s3_bucket" "glue_resources" {
 data "template_file" "signatures_script" {
   template = file("${path.module}/templates/signatures_job.py.tpl")
   vars = {
-    database_name = aws_glue_catalog_database.catalog_db.name
+    catalog_database_name = aws_glue_catalog_database.catalog_db.name
+    redshift_database_name = var.redshift_database_name
   }
 }
 
