@@ -17,21 +17,21 @@ job.init(args['JOB_NAME'], args)
 
 # Step 1: Read from the table in the data catalog
 ## @type: DataSource
-## @args: [database = "${database_name}", table_name = "signatures", transformation_ctx = "datasource0"]
+## @args: [database = "${catalog_database_name}", table_name = "signatures", transformation_ctx = "datasource0"]
 ## @return: datasource0
 ## @inputs: []
-datasource0 = glueContext.create_dynamic_frame.from_catalog(database = "${database_name}", table_name = "signatures", transformation_ctx = "datasource0")
+datasource0 = glueContext.create_dynamic_frame.from_catalog(database = "${catalog_database_name}", table_name = "signatures", transformation_ctx = "datasource0")
 
 # Step 2: Identify the latest partition in the data catalog.
 #         This will correspond to the latest full export, stamped with the date.
 #         Create a new DynamicFrame to read only that partition from the catalog.
 ## @type: DataSource
-## @args: [database = "${database_name}", table_name = "signatures", push_down_predicate= f"(partition_0 == {latestpartition})", transformation_ctx = "datasource1"]
+## @args: [database = "${catalog_database_name}", table_name = "signatures", push_down_predicate= f"(partition_0 == {latestpartition})", transformation_ctx = "datasource1"]
 ## @return: datasource1
 ## @inputs: []
 latestpartition = datasource0.toDF().agg(func.max("partition_0").alias("last_partition")).collect()[0]["last_partition"]
 datasource1 = glueContext.create_dynamic_frame.from_catalog(
-    database = "${database_name}",
+    database = "${catalog_database_name}",
     table_name = "signatures",
     push_down_predicate = f"(partition_0 == {latestpartition})",
     transformation_ctx = "datasource1")
@@ -110,7 +110,7 @@ dropnullfields3 = DropNullFields.apply(frame = resolvechoice2, transformation_ct
 
 # Step 6: Write the transformed data into Redshift, replacing whatever data was in the redshift table previously
 ## @type: DataSink
-## @args: [catalog_connection = "moveon_data_sync_redshift_test", connection_options = {"dbtable": "signatures", "database": "${database_name}"}, redshift_tmp_dir = TempDir, transformation_ctx = "datasink4"]
+## @args: [catalog_connection = "moveon_data_sync_redshift_test", connection_options = {"dbtable": "signatures", "database": "${redshift_database_name}"}, redshift_tmp_dir = TempDir, transformation_ctx = "datasink4"]
 ## @return: datasink4
 ## @inputs: [frame = dropnullfields3]
 datasink4 = glueContext.write_dynamic_frame.from_jdbc_conf(
@@ -118,7 +118,7 @@ datasink4 = glueContext.write_dynamic_frame.from_jdbc_conf(
     catalog_connection = "moveon_data_sync_redshift_test",
     connection_options = {"preactions": "truncate table signatures;",
                           "dbtable": "signatures",
-                          "database": "${database_name}"},
+                          "database": "${redshift_database_name}"},
     redshift_tmp_dir = args["TempDir"], transformation_ctx = "datasink4")
 
 job.commit()
