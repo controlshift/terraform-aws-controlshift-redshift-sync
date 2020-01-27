@@ -8,10 +8,6 @@ const glue = new AWS.Glue()
 const crawlerName = '${glue_crawler_name}'
 
 exports.handler = async (event, context) => {
-  // TODO: Remove debugging logs
-  console.log(JSON.stringify(event))
-  console.log(JSON.stringify(context))
-
   const { body } = event.Records[0]
   const parsed_body = JSON.parse(body)
 
@@ -29,10 +25,8 @@ exports.handler = async (event, context) => {
     glue.startCrawler({ Name: crawlerName }, function (error, data) {
       if (error) {
         console.log(error, error.stack)
-        // TODO: Notify error to SQS (?)
-
         reject({
-          statusCode: 200,
+          statusCode: 500,
           body: error
         })
       } else {

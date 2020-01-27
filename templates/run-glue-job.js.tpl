@@ -12,10 +12,8 @@ exports.handler = async function (event, context) {
     glue.startJobRun({ JobName: jobName }, function (error, data) {
       if (error) {
         console.log(error, error.stack)
-        // TODO: Notify error to SQS (?)
-
         reject({
-          statusCode: 200,
+          statusCode: 500,
           body: error
         })
       } else {
