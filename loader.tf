@@ -45,6 +45,7 @@ data "aws_iam_policy_document" "success_sns_notification_policy" {
     ]
     resources = [
       "arn:aws:sns:*:*:${var.success_topic_name}",
+      "arn:aws:sns:*:*:${var.failure_topic_name}"
     ]
     condition {
       test      = "ArnLike"
