@@ -65,6 +65,16 @@ variable "failure_topic_name" {
   type        = string
   description = "An SNS topic name that will be notified about batch processing failures"
 }
+variable "success_topic_name_for_run_glue_job_lambda" {
+  default = "ControlshiftGlueJobSuccess"
+  type        = string
+  description = "An SNS topic name that will be notified about batch processing successes"
+}
+variable "failure_topic_name_for_run_glue_job_lambda" {
+  default = "ControlshiftGlueJobFailure"
+  type        = string
+  description = "An SNS topic name that will be notified about batch processing failures"
+}
 
 variable "controlshift_hostname" {
   default = "staging.controlshiftlabs.com"
