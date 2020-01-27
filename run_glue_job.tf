@@ -64,3 +64,101 @@ resource "aws_lambda_permission" "allow_crawler_ran_cloudwatch_event" {
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.trigger_glue_job_on_crawler_finished.arn
 }
+
+resource "aws_sns_topic" "glue_job_success" {
+  depends_on = [ aws_glue_job.signatures_full ]
+  name = var.success_topic_name_for_run_glue_job_lambda
+  policy = data.aws_iam_policy_document.sns_notification_policy_for_successful_run_glue_job.json
+}
+
+data "aws_iam_policy_document" "sns_notification_policy_for_successful_run_glue_job" {
+  statement {
+    effect = "Allow"
+    principals {
+      type = "Service"
+      identifiers = [ "events.amazonaws.com" ]
+    }
+    actions = [
+      "SNS:Publish"
+    ]
+    resources = [
+      "arn:aws:sns:*:*:${var.success_topic_name_for_run_glue_job_lambda}"
+    ]
+  }
+}
+
+resource "aws_cloudwatch_event_rule" "successful_glue_job_run" {
+  name        = "successful-glue-job-run"
+  description = "Glue Job finished successfully"
+
+  event_pattern = <<PATTERN
+{
+  "source": [
+    "aws.glue"
+  ],
+  "detail-type": [
+    "Glue Job State Change"
+  ],
+  "detail": {
+    "state": [
+      "SUCCEEDED"
+    ]
+  }
+}
+PATTERN
+}
+
+resource "aws_cloudwatch_event_target" "notify_successful_glue_job" {
+  rule      = aws_cloudwatch_event_rule.successful_glue_job_run.name
+  target_id = "notify-successful-glue-job-run"
+  arn       = aws_sns_topic.glue_job_success.arn
+}
+
+resource "aws_sns_topic" "glue_job_failure" {
+  depends_on = [ aws_glue_job.signatures_full ]
+  name = var.failure_topic_name_for_run_glue_job_lambda
+  policy = data.aws_iam_policy_document.sns_notification_policy_for_failed_run_glue_job.json
+}
+
+data "aws_iam_policy_document" "sns_notification_policy_for_failed_run_glue_job" {
+  statement {
+    effect = "Allow"
+    principals {
+      type = "Service"
+      identifiers = [ "events.amazonaws.com" ]
+    }
+    actions = [
+      "SNS:Publish"
+    ]
+    resources = [
+      "arn:aws:sns:*:*:${var.failure_topic_name_for_run_glue_job_lambda}"
+    ]
+  }
+}
+
+resource "aws_cloudwatch_event_rule" "failed_glue_job_run" {
+  name        = "failed-glue-job-run"
+  description = "Glue Job finished with failure"
+
+  event_pattern = <<PATTERN
+{
+  "source": [
+    "aws.glue"
+  ],
+  "detail-type": [
+    "Glue Job State Change"
+  ],
+  "detail": {
+    "state": [
+      "FAILED", "TIMEOUT"
+    ]
+  }
+}
+PATTERN
+}
+
+resource "aws_cloudwatch_event_target" "notify_failed_glue_job" {
+  rule      = aws_cloudwatch_event_rule.failed_glue_job_run.name
+  target_id = "notify-failed-glue-job-run"
+  arn       = aws_sns_topic.glue_job_failure.arn
+}
