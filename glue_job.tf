@@ -95,9 +95,15 @@ data "aws_subnet" "redshift_subnet" {
   id = var.redshift_subnet_id
 }
 
+data "aws_route_tables" "all_for_vpc" {
+  vpc_id = data.aws_subnet.redshift_subnet.vpc_id
+}
+
 resource "aws_vpc_endpoint" "s3" {
-  vpc_id       = data.aws_subnet.redshift_subnet.vpc_id
-  service_name = "com.amazonaws.${var.aws_region}.s3"
+  vpc_id            = data.aws_subnet.redshift_subnet.vpc_id
+  service_name      = "com.amazonaws.${var.aws_region}.s3"
+  route_table_ids   = data.aws_route_tables.all_for_vpc.ids
+  vpc_endpoint_type = "Gateway"
 }
 
 resource "aws_glue_connection" "redshift_connection" {
