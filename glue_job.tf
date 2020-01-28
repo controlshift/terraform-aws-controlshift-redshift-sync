@@ -80,11 +80,14 @@ resource "aws_iam_role_policy" "controlshift_data_export_bucket_access" {
   policy = data.aws_iam_policy_document.controlshift_data_export_bucket.json
 }
 
-# TODO: Use more restrictive permissions (?)
 data "aws_iam_policy_document" "controlshift_data_export_bucket" {
   statement {
     effect = "Allow"
-    actions = [ "s3:*" ]
+    actions = [
+      "s3:GetObject",
+      "s3:GetBucketLocation",
+      "s3:ListBucket"
+    ]
     resources = [
       "arn:aws:s3:::agra-data-exports-${var.controlshift_environment}/${var.controlshift_organization_slug}/*"
     ]
