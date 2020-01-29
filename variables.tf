@@ -4,15 +4,12 @@ variable "aws_region" {
   description = "The AWS Region to use. Should match the location of your Redshift instance"
 }
 
+variable "redshift_cluster_identifier" {
+  type = string
+  description = "The target Redshift cluster ID"
+}
+
 variable "redshift_database_name" {
-  type = string
-}
-
-variable "redshift_dns_name" {
-  type = string
-}
-
-variable "redshift_port" {
   type = string
 }
 
@@ -27,16 +24,26 @@ variable "redshift_password" {
 variable "redshift_schema" {
   type  = string
   default = "public"
-  description = "The redshift schema to load tables into"
+  description = "The Redshift schema to load tables into"
 }
 
-variable "receiver_bucket_name" {
-  type        = string
-  description = "Your S3 bucket name ingest CSVs will be stored in"
+variable "redshift_security_group_id" {
+  type = string
+  description = "The security group assigned to the Redshift cluster that will be used for connecting by Glue. For requirements on this Security Group see https://docs.aws.amazon.com/glue/latest/dg/setup-vpc-for-glue-access.html"
 }
+
+variable "redshift_subnet_id" {
+  type = string
+  description = "The ID of one of Redshift's cluster subnet group that Glue will use to connect"
+}
+
 variable "manifest_bucket_name" {
   type        = string
   description = "Your S3 bucket name to store manifests of ingests processed in"
+}
+variable "glue_scripts_bucket_name" {
+  type        = string
+  description = "Your S3 bucket name to store Glue scripts in"
 }
 variable "manifest_prefix" {
   default = "manifests"
@@ -58,6 +65,16 @@ variable "failure_topic_name" {
   type        = string
   description = "An SNS topic name that will be notified about batch processing failures"
 }
+variable "success_topic_name_for_run_glue_job_lambda" {
+  default = "ControlshiftGlueJobSuccess"
+  type        = string
+  description = "An SNS topic name that will be notified about batch processing successes"
+}
+variable "failure_topic_name_for_run_glue_job_lambda" {
+  default = "ControlshiftGlueJobFailure"
+  type        = string
+  description = "An SNS topic name that will be notified about batch processing failures"
+}
 
 variable "controlshift_hostname" {
   default = "staging.controlshiftlabs.com"
@@ -75,4 +92,9 @@ variable "controlshift_environment" {
   default = "production"
   type        = string
   description = "The environment of your ControlShift instance. Either staging or production"
+}
+
+variable "controlshift_organization_slug" {
+  type = string
+  description = "The organization's slug in ControlShift platform. Ask support team (support@controlshiftlabs.com) to find this value."
 }

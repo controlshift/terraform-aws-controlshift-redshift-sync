@@ -103,7 +103,9 @@ data "aws_iam_policy_document" "loader_execution_policy" {
       "kms:GetKeyPolicy",
       "kms:Decrypt"
     ]
-    resources = ["*"]
+    resources = [
+      aws_kms_key.lambda_config.arn
+    ]
   }
 
   statement {
@@ -138,7 +140,10 @@ data "aws_iam_policy_document" "loader_execution_policy" {
       "sns:Subscribe",
       "sns:Unsubscribe"
     ]
-    resources = ["*"]
+    resources = [
+      aws_sns_topic.success_sns_topic.arn,
+      aws_sns_topic.failure_sns_topic.arn
+    ]
   }
 
   statement {
@@ -157,4 +162,75 @@ data "aws_iam_policy_document" "loader_execution_policy" {
     actions = ["sqs:ReceiveMessage", "sqs:DeleteMessage", "sqs:GetQueueAttributes"]
     resources = ["arn:aws:sqs:${var.aws_region}:*:${aws_sqs_queue.receiver_queue.name}"]
   }
+}
+
+data "aws_iam_policy_document" "run_glue_job_execution_policy" {
+  # allow the lambda to write cloudwatch logs
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = ["arn:aws:logs:*:*:*"]
+  }
+
+  # allow the lambda to enqueue work
+  statement {
+    effect = "Allow"
+    actions = [ "glue:StartJobRun" ]
+    resources = [ aws_glue_job.signatures_full.arn ]
+  }
+}
+
+resource "aws_iam_role_policy" "lambda_run_glue_job" {
+  name = "AllowsRunGlueJobExecution"
+  role = aws_iam_role.run_glue_job_lambda_role.id
+  policy = data.aws_iam_policy_document.run_glue_job_execution_policy.json
+}
+
+resource "aws_iam_role" "run_glue_job_lambda_role" {
+  name = "RunGlueJobLambdaRole"
+  description = "Used by the controlshift-run-glue-job Lambda for triggering AWS Glue job once the crawler finishes"
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
+}
+
+data "aws_iam_policy_document" "run_glue_crawler_execution_policy" {
+  # allow the lambda to write cloudwatch logs
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = ["arn:aws:logs:*:*:*"]
+  }
+
+  # allow the lambda to enqueue work
+  statement {
+    effect = "Allow"
+    actions = [ "glue:StartCrawler" ]
+    resources = [ aws_glue_crawler.signatures_crawler.arn ]
+  }
+
+  # allow lambda to be wired up to the queue. These are the minimum permissions for the SQS Lambda Executor.
+  statement {
+    effect = "Allow"
+    actions = ["sqs:ReceiveMessage", "sqs:DeleteMessage", "sqs:GetQueueAttributes"]
+    resources = ["arn:aws:sqs:${var.aws_region}:*:${aws_sqs_queue.receiver_queue.name}"]
+  }
+}
+
+resource "aws_iam_role_policy" "lambda_run_glue_crawler" {
+  name = "AllowsRunGlueCrawlerExecution"
+  role = aws_iam_role.run_glue_crawler_lambda_role.id
+  policy = data.aws_iam_policy_document.run_glue_crawler_execution_policy.json
+}
+
+resource "aws_iam_role" "run_glue_crawler_lambda_role" {
+  name = "RunGlueCrawlerLambdaRole"
+  description = "Used by the controlshift-run-glue-crawler Lambda for triggering AWS Glue crawler when a new signatures table full data export is available."
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
