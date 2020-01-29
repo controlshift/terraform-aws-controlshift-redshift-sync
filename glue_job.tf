@@ -69,11 +69,6 @@ resource "aws_iam_role_policy_attachment" "glue_resources" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
 }
 
-resource "aws_iam_role_policy_attachment" "redshift_full_access" {
-  role       = aws_iam_role.glue_service_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonRedshiftFullAccess"
-}
-
 resource "aws_iam_role_policy" "controlshift_data_export_bucket_access" {
   name = "AllowsCrossAccountAccessToControlShiftDataExportBucket"
   role = aws_iam_role.glue_service_role.id
