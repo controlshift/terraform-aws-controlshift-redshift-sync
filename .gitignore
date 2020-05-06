@@ -7,5 +7,6 @@
 
 # .tfvars files
 *.tfvars
+receiver/invoker.zip
 receiver/receiver.zip
 .idea/
