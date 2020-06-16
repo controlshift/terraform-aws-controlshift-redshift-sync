@@ -4,7 +4,7 @@ resource "aws_lambda_function" "loader" {
   function_name = "controlshift-redshift-loader"
   role          = aws_iam_role.loader_lambda_role.arn
   handler       = "index.handler"
-  runtime       = "nodejs8.10"
+  runtime       = "nodejs10.x"
   memory_size   = 512
   timeout       = 900
   environment {
