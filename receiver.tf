@@ -11,7 +11,7 @@ resource "aws_lambda_function" "receiver_lambda" {
   handler       = "receiver.handler"
   runtime       = "nodejs10.x"
   timeout       = var.receiver_timeout
-  source_code_hash = filebase64sha256(data.archive_file.receiver_zip.output_path)
+  source_code_hash = data.archive_file.receiver_zip.output_base64sha256
 
   environment {
     variables = {

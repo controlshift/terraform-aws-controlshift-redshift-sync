@@ -24,7 +24,7 @@ resource "aws_lambda_function" "glue_crawler_lambda" {
   handler       = "index.handler"
   runtime       = "nodejs12.x"
   timeout       = 60
-  source_code_hash = filebase64sha256(data.archive_file.run_glue_crawler_zip.output_path)
+  source_code_hash = data.archive_file.run_glue_crawler_zip.output_base64sha256
 }
 
 resource "aws_lambda_event_source_mapping" "run_crawler_on_new_data_export_task" {
