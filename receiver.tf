@@ -62,6 +62,7 @@ resource "aws_api_gateway_integration_response" "receiver" {
   response_templates = {
     "application/json" = ""
   }
+  depends_on = [aws_api_gateway_integration.request_method_integration]
 }
 
 resource "aws_api_gateway_integration" "request_method_integration" {
