@@ -75,6 +75,12 @@ resource "aws_iam_role_policy" "controlshift_data_export_bucket_access" {
   policy = data.aws_iam_policy_document.controlshift_data_export_bucket.json
 }
 
+resource "aws_iam_role_policy" "controlshift_glue_scripts_bucket_access" {
+  name = "AllowsAccessToGlueScriptsBucket"
+  role = aws_iam_role.glue_service_role.id
+  policy = data.aws_iam_policy_document.controlshift_data_export_bucket.json
+}
+
 data "aws_iam_policy_document" "controlshift_data_export_bucket" {
   statement {
     effect = "Allow"
@@ -85,6 +91,20 @@ data "aws_iam_policy_document" "controlshift_data_export_bucket" {
     ]
     resources = [
       "arn:aws:s3:::agra-data-exports-${var.controlshift_environment}/${var.controlshift_organization_slug}/*"
+    ]
+  }
+}
+
+data "aws_iam_policy_document" "controlshift_glue_scripts_bucket" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:GetBucketLocation",
+      "s3:ListBucket"
+    ]
+    resources = [
+      "arn:aws:s3:::${var.glue_scripts_bucket_name}/*"
     ]
   }
 }
