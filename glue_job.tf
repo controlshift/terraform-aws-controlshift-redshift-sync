@@ -78,7 +78,7 @@ resource "aws_iam_role_policy" "controlshift_data_export_bucket_access" {
 resource "aws_iam_role_policy" "controlshift_glue_scripts_bucket_access" {
   name = "AllowsAccessToGlueScriptsBucket"
   role = aws_iam_role.glue_service_role.id
-  policy = data.aws_iam_policy_document.controlshift_data_export_bucket.json
+  policy = data.aws_iam_policy_document.controlshift_glue_scripts_bucket.json
 }
 
 data "aws_iam_policy_document" "controlshift_data_export_bucket" {
@@ -101,16 +101,15 @@ data "aws_iam_policy_document" "controlshift_glue_scripts_bucket" {
     actions = [
       "s3:GetObject",
       "s3:GetBucketLocation",
-      "s3:ListBucket"
+      "s3:ListBucket",
+      "s3:PutObject",
+      "s3:DeleteObject"
     ]
     resources = [
-      "arn:aws:s3:::${var.glue_scripts_bucket_name}/*"
+      "arn:aws:s3:::${var.glue_scripts_bucket_name}/*",
+      "arn:aws:s3:::${var.glue_scripts_bucket_name}"
     ]
   }
-}
-
-data "aws_subnet" "redshift_subnet" {
-  id = var.redshift_subnet_id
 }
 
 resource "aws_glue_connection" "redshift_connection" {
@@ -123,11 +122,9 @@ resource "aws_glue_connection" "redshift_connection" {
     JDBC_ENFORCE_SSL    = false
   }
 
-  physical_connection_requirements {
-    availability_zone      = data.aws_subnet.redshift_subnet.availability_zone
-    security_group_id_list = [ var.redshift_security_group_id ]
-    subnet_id              = data.aws_subnet.redshift_subnet.id
-  }
+//  physical_connection_requirements {
+//    security_group_id_list = [ var.redshift_security_group_id ]
+//  }
 }
 
 resource "aws_glue_job" "signatures_full" {
