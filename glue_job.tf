@@ -121,10 +121,6 @@ resource "aws_glue_connection" "redshift_connection" {
     USERNAME            = var.redshift_username
     JDBC_ENFORCE_SSL    = false
   }
-
-//  physical_connection_requirements {
-//    security_group_id_list = [ var.redshift_security_group_id ]
-//  }
 }
 
 resource "aws_glue_job" "signatures_full" {
