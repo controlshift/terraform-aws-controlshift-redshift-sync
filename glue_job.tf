@@ -121,6 +121,15 @@ resource "aws_glue_connection" "redshift_connection" {
     USERNAME            = var.redshift_username
     JDBC_ENFORCE_SSL    = false
   }
+
+  dynamic "physical_connection_requirements" {
+    for_each = var.glue_physical_connection_requirements
+    content {
+      availability_zone = physical_connection_requirements.value["availability_zone"]
+      security_group_id_list = physical_connection_requirements.value["security_group_id_list"]
+      subnet_id = physical_connection_requirements.value["subnet_id "]
+    }
+  }
 }
 
 resource "aws_glue_job" "signatures_full" {

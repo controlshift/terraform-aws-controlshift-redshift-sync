@@ -162,6 +162,12 @@ data "aws_iam_policy_document" "loader_execution_policy" {
     actions = ["sqs:ReceiveMessage", "sqs:DeleteMessage", "sqs:GetQueueAttributes"]
     resources = ["arn:aws:sqs:${var.aws_region}:*:${aws_sqs_queue.receiver_queue.name}"]
   }
+
+  statement {
+    effect = "Allow"
+    actions = ["ec2:CreateNetworkInterface", "ec2:DescribeNetworkInterfaces", "ec2:DeleteNetworkInterface"]
+    resources = ["*"]
+  }
 }
 
 data "aws_iam_policy_document" "run_glue_job_execution_policy" {
