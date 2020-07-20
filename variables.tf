@@ -101,7 +101,7 @@ variable "lambda_loader_security_group_ids" {
 }
 
 variable "glue_physical_connection_requirements" {
-  type = map(string)
+  type = object({ availability_zone=string, subnet_id=string, security_group_id_list=list(string) })
   description = "A terraform map of the physical_connection_requirements property of the glue redshift connection. See Terraform aws_glue_connection docs."
-  default = {}
+  default = null
 }
