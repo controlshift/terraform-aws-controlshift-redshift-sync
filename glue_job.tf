@@ -122,8 +122,6 @@ resource "aws_glue_connection" "redshift_connection" {
     JDBC_ENFORCE_SSL    = false
   }
 
-
-
   dynamic "physical_connection_requirements" {
     for_each = var.glue_physical_connection_requirements == null ? [] : list(var.glue_physical_connection_requirements)
     content {

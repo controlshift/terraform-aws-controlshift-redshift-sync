@@ -4,9 +4,15 @@ variable "aws_region" {
   description = "The AWS Region to use. Should match the location of your Redshift instance"
 }
 
+variable "controlshift_aws_region" {
+  default     = "us-east-1"
+  type        = string
+  description = "The AWS Region your ControlShift platform instance lives in. Consult controlshift support if you're not sure."
+}
+
 variable "redshift_cluster_identifier" {
   type = string
-  description = "The target Redshift cluster ID"
+  description = "Your target Redshift cluster ID"
 }
 
 variable "redshift_database_name" {
@@ -28,7 +34,7 @@ variable "redshift_schema" {
 }
 variable "manifest_bucket_name" {
   type        = string
-  description = "Your S3 bucket name to store manifests of ingests processed in"
+  description = "Your S3 bucket name to store manifests of ingests processed in. Will be placed in the controlshift_aws_region AWS region"
 }
 variable "glue_scripts_bucket_name" {
   type        = string

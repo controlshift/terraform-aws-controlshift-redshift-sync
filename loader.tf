@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "loader" {
   s3_bucket = local.lambda_buckets[var.aws_region]
-  s3_key = "LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.7.7.zip"
+  s3_key = "LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.7.8.zip"
   function_name = "controlshift-redshift-loader"
   role          = aws_iam_role.loader_lambda_role.arn
   handler       = "index.handler"
@@ -15,6 +15,7 @@ resource "aws_lambda_function" "loader" {
   environment {
     variables = {
       "DEBUG" = "true"
+      "CONTROLSHIFT_AWS_REGION" = var.controlshift_aws_region
     }
   }
 }
@@ -23,6 +24,7 @@ resource "aws_lambda_event_source_mapping" "process_task" {
   event_source_arn = aws_sqs_queue.receiver_queue.arn
   function_name    = aws_lambda_function.loader.arn
   batch_size = 1
+  depends_on = [aws_iam_role_policy.lambda_loads_tables]
 }
 
 resource "aws_sns_topic" "success_sns_topic" {
