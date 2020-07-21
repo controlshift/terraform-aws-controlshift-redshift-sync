@@ -1,19 +1,7 @@
-data "template_file" "run_glue_crawler_script" {
-  template = file("${path.module}/templates/run-glue-crawler.js.tpl")
-
-  vars = {
-    glue_crawler_name = aws_glue_crawler.signatures_crawler.name
-  }
-}
-
 data "archive_file" "run_glue_crawler_zip" {
   type        = "zip"
-
-   source {
-    content  = "${data.template_file.run_glue_crawler_script.rendered}"
-    filename = "index.js"
-  }
-
+  
+  source_file = "${path.module}/lambdas/run-glue-crawler.js"
   output_path = "${path.module}/lambdas/run-glue-crawler.zip"
 }
 
@@ -25,6 +13,12 @@ resource "aws_lambda_function" "glue_crawler_lambda" {
   runtime       = "nodejs12.x"
   timeout       = 60
   source_code_hash = data.archive_file.run_glue_crawler_zip.output_base64sha256
+
+  environment {
+    variables = {
+      GLUE_CRAWLER_NAME = aws_glue_crawler.signatures_crawler.name
+    }
+  }
 }
 
 resource "aws_lambda_event_source_mapping" "run_crawler_on_new_data_export_task" {

@@ -5,7 +5,7 @@ const AWS = require('aws-sdk')
 AWS.config.update({region: process.env.AWS_REGION})
 
 const glue = new AWS.Glue()
-const jobName = '${glue_job_name}'
+const jobName = process.env.GLUE_JOB_NAME
 
 exports.handler = async function (event, context) {
   return new Promise((resolve, reject) => {

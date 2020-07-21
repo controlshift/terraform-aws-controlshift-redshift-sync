@@ -1,19 +1,7 @@
-data "template_file" "run_glue_job_script" {
-  template = file("${path.module}/templates/run-glue-job.js.tpl")
-
-  vars = {
-    glue_job_name = aws_glue_job.signatures_full.id
-  }
-}
-
 data "archive_file" "run_glue_job_zip" {
   type        = "zip"
 
-   source {
-    content  = "${data.template_file.run_glue_job_script.rendered}"
-    filename = "index.js"
-  }
-
+  source_file = "${path.module}/lambdas/run-glue-job.js"
   output_path = "${path.module}/lambdas/run-glue-job.zip"
 }
 
@@ -25,6 +13,12 @@ resource "aws_lambda_function" "glue_job_lambda" {
   runtime       = "nodejs12.x"
   timeout       = 60
   source_code_hash = data.archive_file.run_glue_job_zip.output_base64sha256
+
+  environment {
+    variables = {
+      GLUE_JOB_NAME = aws_glue_job.signatures_full.id
+    }
+  }
 }
 
 resource "aws_cloudwatch_event_rule" "trigger_glue_job_on_crawler_finished" {
