@@ -22,7 +22,7 @@ resource "aws_lambda_function" "glue_crawler_lambda" {
 }
 
 resource "aws_lambda_event_source_mapping" "run_crawler_on_new_data_export_task" {
-  event_source_arn = aws_sqs_queue.receiver_queue.arn
+  event_source_arn = aws_sqs_queue.receiver_queue_glue.arn
   function_name    = aws_lambda_function.glue_crawler_lambda.arn
   batch_size = 1
 }

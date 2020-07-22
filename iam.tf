@@ -27,11 +27,12 @@ data "aws_iam_policy_document" "receiver_execution_policy" {
     resources = ["arn:aws:logs:*:*:*"]
   }
 
-  # allow the lambda to enqueue work
+  # allow the receiver lambda to enqueue work
   statement {
     effect = "Allow"
     actions = ["sqs:SendMessage"]
-    resources = ["arn:aws:sqs:${var.aws_region}:*:${aws_sqs_queue.receiver_queue.name}"]
+    resources = ["arn:aws:sqs:${var.aws_region}:*:${aws_sqs_queue.receiver_queue.name}",
+                 "arn:aws:sqs:${var.aws_region}:*:${aws_sqs_queue.receiver_queue_glue.name}"]
   }
 }
 
@@ -221,11 +222,11 @@ data "aws_iam_policy_document" "run_glue_crawler_execution_policy" {
     resources = [ aws_glue_crawler.signatures_crawler.arn ]
   }
 
-  # allow lambda to be wired up to the queue. These are the minimum permissions for the SQS Lambda Executor.
+  # allow glue lambda to be wired up to the queue. These are the minimum permissions for the SQS Lambda Executor.
   statement {
     effect = "Allow"
     actions = ["sqs:ReceiveMessage", "sqs:DeleteMessage", "sqs:GetQueueAttributes"]
-    resources = ["arn:aws:sqs:${var.aws_region}:*:${aws_sqs_queue.receiver_queue.name}"]
+    resources = ["arn:aws:sqs:${var.aws_region}:*:${aws_sqs_queue.receiver_queue_glue.name}"]
   }
 }
 

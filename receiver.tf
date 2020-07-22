@@ -16,6 +16,7 @@ resource "aws_lambda_function" "receiver_lambda" {
   environment {
     variables = {
       SQS_QUEUE_URL = aws_sqs_queue.receiver_queue.id
+      GLUE_SQS_QUEUE_URL = aws_sqs_queue.receiver_queue_glue.id
     }
   }
 }
@@ -94,6 +95,11 @@ resource "aws_api_gateway_deployment" "deployment" {
 
 resource "aws_sqs_queue" "receiver_queue" {
   name = "controlshift-received-webhooks"
+  visibility_timeout_seconds = 900
+}
+
+resource "aws_sqs_queue" "receiver_queue_glue" {
+  name = "controlshift-received-webhooks-glue"
   visibility_timeout_seconds = 900
 }
 

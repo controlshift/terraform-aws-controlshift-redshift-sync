@@ -21,16 +21,24 @@ function enqueueTask(receivedData, kind) {
 
   messageBody['kind'] =  kind;
 
-  const params = {
-    MessageBody: JSON.stringify(messageBody),
+  const jsonMessageBody = JSON.stringify(messageBody)
+
+  const loaderQueueParams = {
+    MessageBody: jsonMessageBody,
     QueueUrl: process.env.SQS_QUEUE_URL
+  };
+
+  const glueQueueParams = {
+    MessageBody: jsonMessageBody,
+    QueueUrl: process.env.GLUE_SQS_QUEUE_URL
   };
 
   console.log('Enqueueing ' + JSON.stringify(messageBody) + ' on ' +  process.env.SQS_QUEUE_URL);
 
-  let resp = sqs.sendMessage(params).promise();
+  let loaderResp = sqs.sendMessage(loaderQueueParams).promise();
+  let glueResp = sqs.sendMessage(glueQueueParams).promise();
 
-  resp.then(
+  Promise.all([loaderResp, glueResp]).then(
     function(data) {
       console.log("Success " + data.MessageId);
     },
