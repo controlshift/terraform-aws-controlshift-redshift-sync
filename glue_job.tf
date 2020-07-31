@@ -34,6 +34,7 @@ data "template_file" "signatures_script" {
   template = file("${path.module}/templates/signatures_job.py.tpl")
   vars = {
     catalog_database_name = aws_glue_catalog_database.catalog_db.name
+    controlshift_hostname = var.controlshift_hostname
     redshift_database_name = var.redshift_database_name
     redshift_connection_name = aws_glue_connection.redshift_connection.name
   }
