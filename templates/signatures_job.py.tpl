@@ -108,7 +108,7 @@ resolvechoice2 = ResolveChoice.apply(frame = applymapping1, choice = "make_cols"
 datasink4 = glueContext.write_dynamic_frame.from_jdbc_conf(
     frame = resolvechoice2,
     catalog_connection = "${redshift_connection_name}",
-    connection_options = {"preactions": "truncate table signatures;",
+    connection_options = {"preactions": "truncate table ${redshift_schema}.signatures;",
                           "dbtable": "${redshift_schema}.signatures",
                           "database": "${redshift_database_name}"},
     redshift_tmp_dir = args["TempDir"], transformation_ctx = "datasink4")
