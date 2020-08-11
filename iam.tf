@@ -71,7 +71,7 @@ resource "aws_iam_role" "loader_lambda_role" {
 }
 
 resource "aws_iam_role_policy" "lambda_loads_tables" {
-  name = "AllowsLoaderExecution"
+  name_prefix = "AllowsLoaderExecution"
   role = aws_iam_role.loader_lambda_role.id
   policy = data.aws_iam_policy_document.loader_execution_policy.json
 }
