@@ -91,7 +91,7 @@ applymapping1 = ApplyMapping.apply(
       ("utm_params", "string", "utm_params", "string"),
       ("postcode_id", "bigint", "postcode_id", "long"),
       ("referring_share_click_id", "bigint", "referring_share_click_id", "string"),
-      ("opt_in_sms", "string", "opt_in_sms", "string")],
+      ("opt_in_sms", "string", "opt_in_sms", "boolean")],
     transformation_ctx = "applymapping1")
 
 # Step 4: Deal with column types that aren't consistent
