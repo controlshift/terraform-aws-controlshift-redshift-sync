@@ -38,14 +38,14 @@ datasource1 = glueContext.create_dynamic_frame.from_catalog(
 
 # Step 3: Map the columns in the data catalog / S3 bucket to the columns we want in Redshift
 ## @type: ApplyMapping
-## @args: [mapping = [("id", "bigint", "id", "long"), ("petition_id", "bigint", "petition_id", "long"), ("email", "string", "email", "string"), ("first_name", "string", "first_name", "string"), ("last_name", "string", "last_name", "string"), ("phone_number", "string", "phone_number", "string"), ("postcode", "string", "postcode", "string"), ("created_at", "string", "created_at", "timestamp"), ("join_organisation", "string", "join_organisation", "boolean"), ("deleted_at", "string", "deleted_at", "timestamp"), ("unsubscribe_at", "string", "unsubscribe_at", "timestamp"), ("external_constituent_id", "bigint", "external_constituent_id", "long"), ("member_id", "bigint", "member_id", "long"), ("additional_fields", "string", "additional_fields", "string"), ("cached_organisation_slug", "string", "cached_organisation_slug", "string"), ("source", "string", "source", "string"), ("join_group", "string", "join_group", "boolean"), ("external_id", "bigint", "external_id", "long"), ("new_member", "string", "new_member", "boolean"), ("external_action_id", "string", "external_action_id", "string"), ("locale", "string", "locale", "string"), ("obfuscated_bsd_cons_id", "string", "obfuscated_bsd_cons_id", "string"), ("bucket", "string", "bucket", "string"), ("country", "string", "country", "string"), ("updated_at", "string", "updated_at", "timestamp"), ("user_ip", "string", "user_ip", "string"), ("confirmation_token", "string", "confirmation_token", "string"), ("confirmed_at", "string", "confirmed_at", "timestamp"), ("confirmation_sent_at", "string", "confirmation_sent_at", "timestamp"), ("last_signed_at", "string", "last_signed_at", "timestamp"), ("join_list_suppressed", "string", "join_list_suppressed", "boolean"), ("old_daisy_chain_used", "string", "old_daisy_chain_used", "string"), ("bsd_ab_test_cons_group_id", "string", "bsd_ab_test_cons_group_id", "string"), ("from_embed", "string", "from_embed", "boolean"), ("user_agent", "string", "user_agent", "string"), ("confirmed_reason", "string", "confirmed_reason", "string"), ("synced_to_crm_at", "string", "synced_to_crm_at", "timestamp"), ("daisy_chain_experiment_slug", "string", "daisy_chain_experiment_slug", "string"), ("eu_data_processing_consent", "string", "eu_data_processing_consent", "boolean"), ("from_one_click", "string", "from_one_click", "boolean"), ("consent_content_version_id", "string", "consent_content_version_id", "string"), ("daisy_chain_id_used", "string", "daisy_chain_id_used", "string"), ("email_opt_in_type_id", "bigint", "email_opt_in_type_id", "long"), ("facebook_id", "string", "facebook_id", "string"), ("utm_params", "string", "utm_params", "string"), ("postcode_id", "bigint", "postcode_id", "long"), ("referring_share_click_id", "bigint", "referring_share_click_id", "string"), ("opt_in_sms", "string", "opt_in_sms", "boolean")], transformation_ctx = "applymapping1"]
+## @args: [mapping = [("id", "bigint", "id", "long"), ("petition_id", "bigint", "petition_id", "long"), ("email", "string", "email", "string"), ("first_name", "string", "first_name", "string"), ("last_name", "string", "last_name", "string"), ("phone_number", "string", "phone_number", "string"), ("postcode", "string", "postcode", "string"), ("created_at", "string", "created_at", "timestamp"), ("join_organisation", "string", "join_organisation", "boolean"), ("deleted_at", "string", "deleted_at", "timestamp"), ("unsubscribe_at", "string", "unsubscribe_at", "timestamp"), ("external_constituent_id", "bigint", "external_constituent_id", "long"), ("member_id", "bigint", "member_id", "long"), ("additional_fields", "string", "additional_fields", "string"), ("cached_organisation_slug", "string", "cached_organisation_slug", "string"), ("source", "string", "source", "string"), ("join_group", "string", "join_group", "boolean"), ("external_id", "bigint", "external_id", "long"), ("new_member", "string", "new_member", "boolean"), ("external_action_id", "string", "external_action_id", "string"), ("locale", "string", "locale", "string"), ("obfuscated_bsd_cons_id", "string", "obfuscated_bsd_cons_id", "string"), ("bucket", "string", "bucket", "string"), ("country", "string", "country", "string"), ("updated_at", "string", "updated_at", "timestamp"), ("user_ip", "string", "user_ip", "string"), ("confirmation_token", "string", "confirmation_token", "string"), ("confirmed_at", "string", "confirmed_at", "timestamp"), ("confirmation_sent_at", "string", "confirmation_sent_at", "timestamp"), ("last_signed_at", "string", "last_signed_at", "timestamp"), ("join_list_suppressed", "string", "join_list_suppressed", "boolean"), ("old_daisy_chain_used", "string", "old_daisy_chain_used", "string"), ("bsd_ab_test_cons_group_id", "string", "bsd_ab_test_cons_group_id", "string"), ("from_embed", "string", "from_embed", "boolean"), ("user_agent", "string", "user_agent", "string"), ("confirmed_reason", "string", "confirmed_reason", "string"), ("synced_to_crm_at", "string", "synced_to_crm_at", "timestamp"), ("daisy_chain_experiment_slug", "string", "daisy_chain_experiment_slug", "string"), ("eu_data_processing_consent", "string", "eu_data_processing_consent", "boolean"), ("from_one_click", "string", "from_one_click", "boolean"), ("consent_content_version_id", "string", "consent_content_version_id", "string"), ("daisy_chain_id_used", "string", "daisy_chain_id_used", "string"), ("email_opt_in_type_id", "bigint", "email_opt_in_type_id", "long"), ("facebook_id", "string", "facebook_id", "string"), ("utm_params", "string", "utm_params", "string"), ("postcode_id", "bigint", "postcode_id", "long"), ("referring_share_click_id", "bigint", "referring_share_click_id", "int"), ("opt_in_sms", "string", "opt_in_sms", "boolean")], transformation_ctx = "applymapping1"]
 ## @return: applymapping1
 ## @inputs: [frame = datasource1]
 applymapping1 = ApplyMapping.apply(
     frame = datasource1,
     mappings = [
-      ("id", "bigint", "id", "long"),
-      ("petition_id", "bigint", "petition_id", "long"),
+      ("id", "bigint", "id", "int"),
+      ("petition_id", "bigint", "petition_id", "int"),
       ("email", "string", "email", "string"),
       ("first_name", "string", "first_name", "string"),
       ("last_name", "string", "last_name", "string"),
@@ -55,13 +55,13 @@ applymapping1 = ApplyMapping.apply(
       ("join_organisation", "string", "join_organisation", "boolean"),
       ("deleted_at", "string", "deleted_at", "timestamp"),
       ("unsubscribe_at", "string", "unsubscribe_at", "timestamp"),
-      ("external_constituent_id", "bigint", "external_constituent_id", "long"),
-      ("member_id", "bigint", "member_id", "long"),
+      ("external_constituent_id", "bigint", "external_constituent_id", "string"),
+      ("member_id", "bigint", "member_id", "int"),
       ("additional_fields", "string", "additional_fields", "string"),
       ("cached_organisation_slug", "string", "cached_organisation_slug", "string"),
       ("source", "string", "source", "string"),
-      ("join_group", "string", "join_group", "boolean"),
-      ("external_id", "bigint", "external_id", "long"),
+      ("join_partnership", "string", "join_partnership", "boolean"),
+      ("external_id", "bigint", "external_id", "string"),
       ("new_member", "string", "new_member", "boolean"),
       ("external_action_id", "string", "external_action_id", "string"),
       ("locale", "string", "locale", "string"),
@@ -84,14 +84,18 @@ applymapping1 = ApplyMapping.apply(
       ("daisy_chain_experiment_slug", "string", "daisy_chain_experiment_slug", "string"),
       ("eu_data_processing_consent", "string", "eu_data_processing_consent", "boolean"),
       ("from_one_click", "string", "from_one_click", "boolean"),
-      ("consent_content_version_id", "string", "consent_content_version_id", "string"),
-      ("daisy_chain_id_used", "string", "daisy_chain_id_used", "string"),
-      ("email_opt_in_type_id", "bigint", "email_opt_in_type_id", "long"),
+      ("consent_content_version_id", "string", "consent_content_version_id", "bigint"),
+      ("daisy_chain_id_used", "string", "daisy_chain_id_used", "bigint"),
+      ("email_opt_in_type_id", "bigint", "email_opt_in_type_id", "bigint"),
       ("facebook_id", "string", "facebook_id", "string"),
       ("utm_params", "string", "utm_params", "string"),
-      ("postcode_id", "bigint", "postcode_id", "long"),
-      ("referring_share_click_id", "bigint", "referring_share_click_id", "string"),
-      ("opt_in_sms", "string", "opt_in_sms", "boolean")],
+      ("postcode_id", "bigint", "postcode_id", "bigint"),
+      ("referring_share_click_id", "bigint", "referring_share_click_id", "int"),
+      ("opt_in_sms", "string", "opt_in_sms", "boolean"),
+      ("sms_opt_in_type_id", "string", "sms_opt_in_type_id", "bigint"),
+      ("recaptcha_score", "string", "recaptcha_score", "decimal(3,2)"),
+      ("new_mobile_subscriber", "string", "new_mobile_subscriber", "boolean")
+      ],
     transformation_ctx = "applymapping1")
 
 # Step 4: Deal with column types that aren't consistent
