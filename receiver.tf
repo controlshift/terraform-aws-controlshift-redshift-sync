@@ -1,29 +1,7 @@
-data "archive_file" "invoker_zip" {
-  type        = "zip"
-  source_file = "${path.module}/receiver/invoker.js"
-  output_path = "${path.module}/receiver/invoker.zip"
-}
-
 data "archive_file" "receiver_zip" {
   type        = "zip"
   source_file = "${path.module}/lambdas/receiver.js"
   output_path = "${path.module}/lambdas/receiver.zip"
-}
-
-resource "aws_lambda_function" "invoker_lambda" {
-  filename = data.archive_file.invoker_zip.output_path
-  function_name = "controlshift-webhook-handler-invoker"
-  role          = aws_iam_role.invoker_lambda_role.arn
-  handler       = "invoker.handler"
-  runtime       = "nodejs10.x"
-  timeout       = 30
-  source_code_hash = filebase64sha256(data.archive_file.invoker_zip.output_path)
-
-  environment {
-    variables = {
-      S3_BUCKET = aws_s3_bucket.receiver.bucket
-    }
-  }
 }
 
 resource "aws_lambda_function" "receiver_lambda" {
@@ -32,7 +10,6 @@ resource "aws_lambda_function" "receiver_lambda" {
   role          = aws_iam_role.receiver_lambda_role.arn
   handler       = "receiver.handler"
   runtime       = "nodejs10.x"
-  memory_size   = 256
   timeout       = var.receiver_timeout
   source_code_hash = data.archive_file.receiver_zip.output_base64sha256
 
@@ -96,14 +73,14 @@ resource "aws_api_gateway_integration" "request_method_integration" {
   resource_id = aws_api_gateway_resource.webhook.id
   http_method = "POST"
   type        = "AWS_PROXY"
-  uri         = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${aws_lambda_function.invoker_lambda.arn}/invocations"
+  uri         = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${aws_lambda_function.receiver_lambda.arn}/invocations"
   # AWS lambdas can only be invoked with the POST method
   integration_http_method = "POST"
 }
 
 # The * part allows invocation from any stage within API Gateway REST API.
 resource "aws_lambda_permission" "allow_api_gateway" {
-  function_name = aws_lambda_function.invoker_lambda.function_name
+  function_name = aws_lambda_function.receiver_lambda.function_name
   statement_id  = "AllowExecutionFromApiGateway"
   action        = "lambda:InvokeFunction"
   principal     = "apigateway.amazonaws.com"
