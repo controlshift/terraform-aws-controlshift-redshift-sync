@@ -1,12 +1,26 @@
 'use strict';
 
 const AWS = require('aws-sdk');
-
 // Set the region
 AWS.config.update({region: process.env.AWS_REGION});
 
 // Create an SQS service object
 const sqs = new AWS.SQS();
+
+// Create a Kinesis service object
+const kinesis = new AWS.Kinesis();
+
+function sendKinesis(data, key, stream) {
+  let params = {
+    Data: data,
+    PartitionKey: key,
+    StreamName: stream
+  };
+  kinesis.putRecord(params, function(err, data) {
+    if (err) console.log(err, err.stack);
+    else     console.log('Record added:',data);
+  });
+}
 
 function enqueueTask(receivedData, kind) {
   console.log("Processing: " + receivedData.url);
@@ -21,7 +35,7 @@ function enqueueTask(receivedData, kind) {
 
   messageBody['kind'] =  kind;
 
-  const jsonMessageBody = JSON.stringify(messageBody)
+  const jsonMessageBody = JSON.stringify(messageBody);
 
   const loaderQueueParams = {
     MessageBody: jsonMessageBody,
@@ -46,7 +60,6 @@ function enqueueTask(receivedData, kind) {
       console.log("Error", error);
     }
   );
-  return resp
 }
 
 function sendResponse(body) {
@@ -69,6 +82,12 @@ exports.handler = async (event) => {
       return sendResponse({"status": "processed"});
     } else if(receivedJSON.type === 'data.incremental_table_exported'){
       await enqueueTask(receivedJSON.data, 'incremental');
+      return sendResponse({"status": "processed"});
+    } else if(receivedJSON.type === 'email.open' && process.env.EMAIL_OPEN_KINESIS_STREAM !== null && process.env.EMAIL_OPEN_KINESIS_STREAM !== ''){
+      await sendKinesis(JSON.stringify(receivedJSON.data), receivedJSON.jid, process.env.EMAIL_OPEN_KINESIS_STREAM);
+      return sendResponse({"status": "processed"});
+    } else if(receivedJSON.type === 'email.click' && process.env.EMAIL_CLICK_KINESIS_STREAM !== null && process.env.EMAIL_CLICK_KINESIS_STREAM !== ''){
+      await sendKinesis(JSON.stringify(receivedJSON.data), receivedJSON.jid, process.env.EMAIL_CLICK_KINESIS_STREAM);
       return sendResponse({"status": "processed"});
     } else {
       return Promise.resolve(sendResponse({"status": "skipped", "payload": receivedJSON}));
