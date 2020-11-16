@@ -97,7 +97,7 @@ resource "aws_iam_role_policy_attachment" "gateway_cloudwatch_logging" {
 }
 
 resource "aws_iam_role" "loader_lambda_role" {
-  name = "LoaderLambdaRole"
+  name_prefix = "LoaderLambdaRole"
   description = "Used by the controlshift-redshift-loader Lambda for processing db replication data from ControlShift into Redshift"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
