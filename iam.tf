@@ -9,36 +9,10 @@ data "aws_iam_policy_document" "lambda_assume_role" {
   }
 }
 
-resource "aws_iam_role" "invoker_lambda_role" {
-  name = "ControlShiftInvokerLambdaRole"
-  description = "Used by the controlshift-webhook-handler-invoker Lambda for asynchronously invoking the receiver lambda with the db replication data from ControlShift"
-  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
-}
-
 resource "aws_iam_role" "receiver_lambda_role" {
   name = "ReceiverLambdaRole"
   description = "Used by the controlshift-webhook-handler Lambda for receiving db replication data from ControlShift"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
-}
-
-data "aws_iam_policy_document" "invoker_execution_policy" {
-  # allow the lambda to write cloudwatch logs
-  statement {
-    effect = "Allow"
-    actions = [
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-      "logs:PutLogEvents"
-    ]
-    resources = ["arn:aws:logs:*:*:*"]
-  }
-
-  # allow the lambda to invoke the receiver lambda
-  statement {
-    effect = "Allow"
-    actions = ["lambda:InvokeFunction"]
-    resources = ["*"]
-  }
 }
 
 data "aws_iam_policy_document" "receiver_execution_policy" {

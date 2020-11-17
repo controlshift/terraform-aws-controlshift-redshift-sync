@@ -13,8 +13,7 @@ resource "aws_dynamodb_table" "loader_config" {
 }
 
 resource "aws_dynamodb_table_item" "load_config_full_items" {
-  /*for_each = toset([for table in jsondecode(data.http.bulk_data_schemas.body)["tables"] : table["table"]["name"]])*/
-  for_each = toset([for table in jsondecode(data.http.bulk_data_schemas.body)["tables"] : table["table"]["name"] if table["table"]["name"] != "signatures"])
+  for_each = toset([for table in jsondecode(data.http.bulk_data_schemas.body)["tables"] : table["table"]["name"]])
 
   table_name = aws_dynamodb_table.loader_config.name
   hash_key   = aws_dynamodb_table.loader_config.hash_key
@@ -35,8 +34,7 @@ resource "aws_dynamodb_table_item" "load_config_full_items" {
 }
 
 data "template_file" "loader_config_full_item" {
-  /*for_each = toset([for table in jsondecode(data.http.bulk_data_schemas.body)["tables"] : table["table"]["name"]])*/
-  for_each = toset([for table in jsondecode(data.http.bulk_data_schemas.body)["tables"] : table["table"]["name"] if table["table"]["name"] != "signatures"])
+  for_each = toset([for table in jsondecode(data.http.bulk_data_schemas.body)["tables"] : table["table"]["name"]])
 
   template = "${file("${path.module}/config_item.json")}"
   vars = {
