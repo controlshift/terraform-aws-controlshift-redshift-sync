@@ -7,16 +7,17 @@ AWS.config.update({region: process.env.AWS_REGION});
 // Create an SQS service object
 const sqs = new AWS.SQS();
 
-// Create a Kinesis service object
-const kinesis = new AWS.Kinesis();
+// Create a Firehose service object
+const firehose = new AWS.Firehose();
 
-function sendKinesis(data, key, stream) {
+function putFirehose(data, stream) {
   let params = {
-    Data: data,
-    PartitionKey: key,
-    StreamName: stream
+    DeliveryStreamName: stream,
+    Record:{
+      Data: data
+    }
   };
-  kinesis.putRecord(params, function(err, data) {
+  firehose.putRecord(params, function(err, data) {
     if (err) console.log(err, err.stack);
     else     console.log('Record added:',data);
   });
@@ -83,11 +84,11 @@ exports.handler = async (event) => {
     } else if(receivedJSON.type === 'data.incremental_table_exported'){
       await enqueueTask(receivedJSON.data, 'incremental');
       return sendResponse({"status": "processed"});
-    } else if(receivedJSON.type === 'email.open' && process.env.EMAIL_OPEN_KINESIS_STREAM !== null && process.env.EMAIL_OPEN_KINESIS_STREAM !== ''){
-      await sendKinesis(JSON.stringify(receivedJSON.data), receivedJSON.jid, process.env.EMAIL_OPEN_KINESIS_STREAM);
+    } else if(receivedJSON.type === 'email.open' && process.env.EMAIL_OPEN_FIREHOSE_STREAM !== null && process.env.EMAIL_OPEN_FIREHOSE_STREAM !== ''){
+      await putFirehose(JSON.stringify(receivedJSON.data), receivedJSON.jid, process.env.EMAIL_OPEN_FIREHOSE_STREAM);
       return sendResponse({"status": "processed"});
-    } else if(receivedJSON.type === 'email.click' && process.env.EMAIL_CLICK_KINESIS_STREAM !== null && process.env.EMAIL_CLICK_KINESIS_STREAM !== ''){
-      await sendKinesis(JSON.stringify(receivedJSON.data), receivedJSON.jid, process.env.EMAIL_CLICK_KINESIS_STREAM);
+    } else if(receivedJSON.type === 'email.click' && process.env.EMAIL_CLICK_FIREHOSE_STREAM !== null && process.env.EMAIL_CLICK_FIREHOSE_STREAM !== ''){
+      await putFirehose(JSON.stringify(receivedJSON.data), receivedJSON.jid, process.env.EMAIL_CLICK_FIREHOSE_STREAM);
       return sendResponse({"status": "processed"});
     } else {
       return Promise.resolve(sendResponse({"status": "skipped", "payload": receivedJSON}));

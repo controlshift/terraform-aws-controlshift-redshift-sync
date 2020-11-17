@@ -17,8 +17,8 @@ resource "aws_lambda_function" "receiver_lambda" {
     variables = {
       SQS_QUEUE_URL = aws_sqs_queue.receiver_queue.id
       GLUE_SQS_QUEUE_URL = aws_sqs_queue.receiver_queue_glue.id
-      EMAIL_OPEN_KINESIS_STREAM = var.email_open_kinesis_stream
-      EMAIL_CLICK_KINESIS_STREAM = var.email_click_kinesis_stream
+      EMAIL_OPEN_FIREHOSE_STREAM = var.email_open_firehose_stream
+      EMAIL_CLICK_FIREHOSE_STREAM = var.email_click_firehose_stream
     }
   }
 }
