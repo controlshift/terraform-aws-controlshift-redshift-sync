@@ -46,7 +46,6 @@ function enqueueTask(receivedData, kind) {
       console.log("Error", error);
     }
   );
-  return resp
 }
 
 function sendResponse(body) {
