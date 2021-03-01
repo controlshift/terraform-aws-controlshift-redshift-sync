@@ -12,7 +12,7 @@
       "truncateTarget": {"BOOL": ${truncate_target}},
       "useSSL": {"BOOL": false}
     }}]},
-  "copyOptions": {"S": "EMPTYASNULL TRUNCATECOLUMNS GZIP"},
+  "copyOptions": {"S": "EMPTYASNULL TRUNCATECOLUMNS"},
   "dataFormat": {"S": "CSV"},
   "csvDelimiter": {"S": ","},
   "ignoreCsvHeader": {"BOOL": true},
