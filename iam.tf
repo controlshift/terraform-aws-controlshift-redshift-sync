@@ -37,7 +37,7 @@ data "aws_iam_policy_document" "receiver_execution_policy" {
 
   # allow the receiver lambda to send messages to Firehose streams
   statement {
-      effect = "Allow",
+      effect = "Allow"
       actions = [
           "firehose:DeleteDeliveryStream",
           "firehose:PutRecord",
@@ -46,7 +46,7 @@ data "aws_iam_policy_document" "receiver_execution_policy" {
           "firehose:PutRecordBatch",
           "firehose:StopDeliveryStreamEncryption",
           "firehose:UpdateDestination"
-      ],
+      ]
       resources = ["arn:aws:firehose:${var.aws_region}:*:deliverystream/${var.email_open_firehose_stream}",
       "arn:aws:firehose:${var.aws_region}:*:deliverystream/${var.email_click_firehose_stream}"]
   }
