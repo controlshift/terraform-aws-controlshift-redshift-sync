@@ -34,6 +34,22 @@ data "aws_iam_policy_document" "receiver_execution_policy" {
     resources = ["arn:aws:sqs:${var.aws_region}:*:${aws_sqs_queue.receiver_queue.name}",
                  "arn:aws:sqs:${var.aws_region}:*:${aws_sqs_queue.receiver_queue_glue.name}"]
   }
+
+  # allow the receiver lambda to send messages to Firehose streams
+  statement {
+      effect = "Allow"
+      actions = [
+          "firehose:DeleteDeliveryStream",
+          "firehose:PutRecord",
+          "firehose:StartDeliveryStreamEncryption",
+          "firehose:CreateDeliveryStream",
+          "firehose:PutRecordBatch",
+          "firehose:StopDeliveryStreamEncryption",
+          "firehose:UpdateDestination"
+      ]
+      resources = ["arn:aws:firehose:${var.aws_region}:*:deliverystream/${var.email_open_firehose_stream}",
+      "arn:aws:firehose:${var.aws_region}:*:deliverystream/${var.email_click_firehose_stream}"]
+  }
 }
 
 resource "aws_iam_role_policy" "lambda_receiver" {
