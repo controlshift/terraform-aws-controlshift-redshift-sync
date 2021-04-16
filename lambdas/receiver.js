@@ -85,10 +85,10 @@ exports.handler = async (event) => {
       await enqueueTask(receivedJSON.data, 'incremental');
       return sendResponse({"status": "processed"});
     } else if(receivedJSON.type === 'email.open' && process.env.EMAIL_OPEN_FIREHOSE_STREAM !== null && process.env.EMAIL_OPEN_FIREHOSE_STREAM !== ''){
-      await putFirehose(JSON.stringify(receivedJSON.data), receivedJSON.jid, process.env.EMAIL_OPEN_FIREHOSE_STREAM);
+      await putFirehose(JSON.stringify(receivedJSON.data), process.env.EMAIL_OPEN_FIREHOSE_STREAM);
       return sendResponse({"status": "processed"});
     } else if(receivedJSON.type === 'email.click' && process.env.EMAIL_CLICK_FIREHOSE_STREAM !== null && process.env.EMAIL_CLICK_FIREHOSE_STREAM !== ''){
-      await putFirehose(JSON.stringify(receivedJSON.data), receivedJSON.jid, process.env.EMAIL_CLICK_FIREHOSE_STREAM);
+      await putFirehose(JSON.stringify(receivedJSON.data), process.env.EMAIL_CLICK_FIREHOSE_STREAM);
       return sendResponse({"status": "processed"});
     } else {
       return Promise.resolve(sendResponse({"status": "skipped", "payload": receivedJSON}));
