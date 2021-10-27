@@ -115,3 +115,10 @@ variable "vpc_id" {
   type = string
   description = "The ID of the VPC Glue uses for connecting with Redshift"
 }
+
+variable "namespace_suffixes" {
+  default     = []
+  type = list(string)
+  description = "Suffixes to add to each named resource managed by this sync. For managing multiple syncs in one AWS account."
+}
+

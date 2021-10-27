@@ -6,7 +6,7 @@ data "archive_file" "receiver_zip" {
 
 resource "aws_lambda_function" "receiver_lambda" {
   filename = data.archive_file.receiver_zip.output_path
-  function_name = "controlshift-webhook-handler"
+  function_name = "controlshift-webhook-handler${local.namespace_suffix_dashed}"
   role          = aws_iam_role.receiver_lambda_role.arn
   handler       = "receiver.handler"
   runtime       = "nodejs12.x"
@@ -22,7 +22,7 @@ resource "aws_lambda_function" "receiver_lambda" {
 }
 
 resource "aws_api_gateway_rest_api" "receiver" {
-  name = "controlshift-webhook-receiver"
+  name = "controlshift-webhook-receiver${local.namespace_suffix_dashed}"
   description = "Receives ControlShift webhooks and dumps them onto an SQS queue"
 
   endpoint_configuration {
@@ -94,17 +94,17 @@ resource "aws_api_gateway_deployment" "deployment" {
 }
 
 resource "aws_sqs_queue" "receiver_queue" {
-  name = "controlshift-received-webhooks"
+  name = "controlshift-received-webhooks${local.namespace_suffix_dashed}"
   visibility_timeout_seconds = 900
 }
 
 resource "aws_sqs_queue" "receiver_queue_glue" {
-  name = "controlshift-received-webhooks-glue"
+  name = "controlshift-received-webhooks-glue${local.namespace_suffix_dashed}"
   visibility_timeout_seconds = 900
 }
 
 # there is no formal way to associate this resource, beyond ensuring the name matches.
 resource "aws_cloudwatch_log_group" "api_gateway_log_retention" {
-  name              = "API-Gateway-Execution-Logs_${aws_api_gateway_rest_api.receiver.id}/${aws_api_gateway_deployment.deployment.stage_name}"
+  name              = "API-Gateway-Execution-Logs${local.namespace_suffix_dashed}_${aws_api_gateway_rest_api.receiver.id}/${aws_api_gateway_deployment.deployment.stage_name}"
   retention_in_days = 5
 }

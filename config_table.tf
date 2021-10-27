@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "loader_config" {
-  name  = "LambdaRedshiftBatchLoadConfig"
+  name  = "LambdaRedshiftBatchLoadConfig${local.namespace_suffix_dashed}"
   billing_mode = "PROVISIONED"
   read_capacity  = 1
   write_capacity = 5
@@ -120,7 +120,7 @@ resource "aws_kms_ciphertext" "redshift_password" {
 }
 
 resource "aws_kms_alias" "lambda_alias" {
-  name = "alias/LambaRedshiftLoaderKey"
+  name = "alias/LambaRedshiftLoaderKey${local.namespace_suffix_dashed}"
   target_key_id = aws_kms_key.lambda_config.key_id
 }
 

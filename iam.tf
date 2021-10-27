@@ -10,8 +10,8 @@ data "aws_iam_policy_document" "lambda_assume_role" {
 }
 
 resource "aws_iam_role" "receiver_lambda_role" {
-  name = "ReceiverLambdaRole"
-  description = "Used by the controlshift-webhook-handler Lambda for receiving db replication data from ControlShift"
+  name = "ReceiverLambdaRole${local.namespace_suffix_dashed}"
+  description = "Used by the controlshift-webhook-handler${local.namespace_suffix_dashed} Lambda for receiving db replication data from ControlShift"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
 
@@ -37,13 +37,13 @@ data "aws_iam_policy_document" "receiver_execution_policy" {
 }
 
 resource "aws_iam_role_policy" "lambda_receiver" {
-  name = "AllowsReceiverExecution"
+  name = "AllowsReceiverExecution${local.namespace_suffix_dashed}"
   role = aws_iam_role.receiver_lambda_role.id
   policy = data.aws_iam_policy_document.receiver_execution_policy.json
 }
 
 resource "aws_iam_role" "api_gateway_role" {
-  name = "APIGatewayRole"
+  name = "APIGatewayRole${local.namespace_suffix_dashed}"
   description = "Used by the Controlshift API Gateway webhook endpoint for CloudWatch logging"
   assume_role_policy = data.aws_iam_policy_document.gateway_assume_role.json
 }
@@ -66,7 +66,7 @@ resource "aws_iam_role_policy_attachment" "gateway_cloudwatch_logging" {
 
 resource "aws_iam_role" "loader_lambda_role" {
   name_prefix = "LoaderLambdaRole"
-  description = "Used by the controlshift-redshift-loader Lambda for processing db replication data from ControlShift into Redshift"
+  description = "Used by the controlshift-redshift-loader${local.namespace_suffix_dashed} Lambda for processing db replication data from ControlShift into Redshift"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
 
@@ -192,14 +192,14 @@ data "aws_iam_policy_document" "run_glue_job_execution_policy" {
 }
 
 resource "aws_iam_role_policy" "lambda_run_glue_job" {
-  name = "AllowsRunGlueJobExecution"
+  name = "AllowsRunGlueJobExecution${local.namespace_suffix_dashed}"
   role = aws_iam_role.run_glue_job_lambda_role.id
   policy = data.aws_iam_policy_document.run_glue_job_execution_policy.json
 }
 
 resource "aws_iam_role" "run_glue_job_lambda_role" {
-  name = "RunGlueJobLambdaRole"
-  description = "Used by the controlshift-run-glue-job Lambda for triggering AWS Glue job once the crawler finishes"
+  name = "RunGlueJobLambdaRole${local.namespace_suffix_dashed}"
+  description = "Used by the controlshift-run-glue-job${local.namespace_suffix_dashed} Lambda for triggering AWS Glue job once the crawler finishes"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
 
@@ -231,13 +231,13 @@ data "aws_iam_policy_document" "run_glue_crawler_execution_policy" {
 }
 
 resource "aws_iam_role_policy" "lambda_run_glue_crawler" {
-  name = "AllowsRunGlueCrawlerExecution"
+  name = "AllowsRunGlueCrawlerExecution${local.namespace_suffix_dashed}"
   role = aws_iam_role.run_glue_crawler_lambda_role.id
   policy = data.aws_iam_policy_document.run_glue_crawler_execution_policy.json
 }
 
 resource "aws_iam_role" "run_glue_crawler_lambda_role" {
-  name = "RunGlueCrawlerLambdaRole"
-  description = "Used by the controlshift-run-glue-crawler Lambda for triggering AWS Glue crawler when a new signatures table full data export is available."
+  name = "RunGlueCrawlerLambdaRole${local.namespace_suffix_dashed}"
+  description = "Used by the controlshift-run-glue-crawler${local.namespace_suffix_dashed} Lambda for triggering AWS Glue crawler when a new signatures table full data export is available."
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }

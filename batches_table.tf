@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "batches" {
-  name  = "LambdaRedshiftBatches"
+  name  = "LambdaRedshiftBatches${local.namespace_suffix_dashed}"
   billing_mode = "PROVISIONED"
   read_capacity  = 1
   write_capacity = 5

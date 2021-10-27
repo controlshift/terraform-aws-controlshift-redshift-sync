@@ -1,5 +1,5 @@
 resource "aws_glue_catalog_database" "catalog_db" {
-  name = "controlshift_${var.controlshift_environment}"
+  name = "controlshift_${var.controlshift_environment}${local.namespace_suffix_underscored}"
 }
 
 locals {
@@ -8,7 +8,7 @@ locals {
 
 resource "aws_glue_crawler" "signatures_crawler" {
   database_name = aws_glue_catalog_database.catalog_db.name
-  name = "${var.controlshift_environment}_full_signatures"
+  name = "${var.controlshift_environment}_full_signatures${local.namespace_suffix_underscored}"
   role = aws_iam_role.glue_service_role.arn
 
   s3_target {
@@ -49,7 +49,7 @@ resource "aws_s3_bucket_object" "signatures_script" {
 }
 
 resource "aws_iam_role" "glue_service_role" {
-  name = "AWSGlueServiceRole"
+  name = "AWSGlueServiceRole${local.namespace_suffix_dashed}"
   description = "Used by the AWS Glue jobs to insert data into redshift"
   assume_role_policy = data.aws_iam_policy_document.glue_assume_role.json
 }
@@ -71,13 +71,13 @@ resource "aws_iam_role_policy_attachment" "glue_resources" {
 }
 
 resource "aws_iam_role_policy" "controlshift_data_export_bucket_access" {
-  name = "AllowsCrossAccountAccessToControlShiftDataExportBucket"
+  name = "AllowsCrossAccountAccessToControlShiftDataExportBucket${local.namespace_suffix_dashed}"
   role = aws_iam_role.glue_service_role.id
   policy = data.aws_iam_policy_document.controlshift_data_export_bucket.json
 }
 
 resource "aws_iam_role_policy" "controlshift_glue_scripts_bucket_access" {
-  name = "AllowsAccessToGlueScriptsBucket"
+  name = "AllowsAccessToGlueScriptsBucket${local.namespace_suffix_dashed}"
   role = aws_iam_role.glue_service_role.id
   policy = data.aws_iam_policy_document.controlshift_glue_scripts_bucket.json
 }
@@ -114,7 +114,7 @@ data "aws_iam_policy_document" "controlshift_glue_scripts_bucket" {
 }
 
 resource "aws_glue_connection" "redshift_connection" {
-  name = "controlshift_${var.controlshift_environment}_data_sync"
+  name = "controlshift_${var.controlshift_environment}_data_sync${local.namespace_suffix_underscored}"
 
   connection_properties = {
     JDBC_CONNECTION_URL = "jdbc:redshift://${data.aws_redshift_cluster.sync_data_target.endpoint}:${data.aws_redshift_cluster.sync_data_target.port}/${var.redshift_database_name}"
@@ -131,7 +131,7 @@ resource "aws_glue_connection" "redshift_connection" {
 }
 
 resource "aws_glue_job" "signatures_full" {
-  name = "cs-${var.controlshift_environment}-signatures-full"
+  name = "cs-${var.controlshift_environment}-signatures-full${local.namespace_suffix_dashed}"
   connections = [ aws_glue_connection.redshift_connection.name ]
   glue_version = "3.0"
   default_arguments = {
@@ -172,7 +172,7 @@ data "aws_iam_policy_document" "sns_notification_policy_for_successful_run_glue_
 }
 
 resource "aws_cloudwatch_event_rule" "successful_glue_job_run" {
-  name        = "successful-glue-job-run"
+  name        = "successful-glue-job-run${local.namespace_suffix_dashed}"
   description = "Glue Job finished successfully"
 
   event_pattern = <<PATTERN
@@ -194,7 +194,7 @@ PATTERN
 
 resource "aws_cloudwatch_event_target" "notify_successful_glue_job" {
   rule      = aws_cloudwatch_event_rule.successful_glue_job_run.name
-  target_id = "notify-successful-glue-job-run"
+  target_id = "notify-successful-glue-job-run${local.namespace_suffix_dashed}"
   arn       = aws_sns_topic.glue_job_success.arn
 }
 
@@ -221,7 +221,7 @@ data "aws_iam_policy_document" "sns_notification_policy_for_failed_run_glue_job"
 }
 
 resource "aws_cloudwatch_event_rule" "failed_glue_job_run" {
-  name        = "failed-glue-job-run"
+  name        = "failed-glue-job-run${local.namespace_suffix_dashed}"
   description = "Glue Job finished with failure"
 
   event_pattern = <<PATTERN
@@ -243,7 +243,7 @@ PATTERN
 
 resource "aws_cloudwatch_event_target" "notify_failed_glue_job" {
   rule      = aws_cloudwatch_event_rule.failed_glue_job_run.name
-  target_id = "notify-failed-glue-job-run"
+  target_id = "notify-failed-glue-job-run${local.namespace_suffix_dashed}"
   arn       = aws_sns_topic.glue_job_failure.arn
 }
 

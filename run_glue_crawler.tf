@@ -7,7 +7,7 @@ data "archive_file" "run_glue_crawler_zip" {
 
 resource "aws_lambda_function" "glue_crawler_lambda" {
   filename = data.archive_file.run_glue_crawler_zip.output_path
-  function_name = "controlshift-run-glue-crawler"
+  function_name = "controlshift-run-glue-crawler${local.namespace_suffix_dashed}"
   role          = aws_iam_role.run_glue_crawler_lambda_role.arn
   handler       = "run-glue-crawler.handler"
   runtime       = "nodejs12.x"

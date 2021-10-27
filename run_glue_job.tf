@@ -7,7 +7,7 @@ data "archive_file" "run_glue_job_zip" {
 
 resource "aws_lambda_function" "glue_job_lambda" {
   filename = data.archive_file.run_glue_job_zip.output_path
-  function_name = "controlshift-run-glue-job"
+  function_name = "controlshift-run-glue-job${local.namespace_suffix_dashed}"
   role          = aws_iam_role.run_glue_job_lambda_role.arn
   handler       = "run-glue-job.handler"
   runtime       = "nodejs12.x"
@@ -22,7 +22,7 @@ resource "aws_lambda_function" "glue_job_lambda" {
 }
 
 resource "aws_cloudwatch_event_rule" "trigger_glue_job_on_crawler_finished" {
-  name        = "trigger-glue-job-on-crawler-finished"
+  name        = "trigger-glue-job-on-crawler-finished${local.namespace_suffix_dashed}"
   description = "Trigger Lambda to start Glue job when crawler finishes successfully"
 
   event_pattern = <<PATTERN
@@ -47,7 +47,7 @@ PATTERN
 
 resource "aws_cloudwatch_event_target" "trigger_run_glue_job_lambda" {
   rule      = aws_cloudwatch_event_rule.trigger_glue_job_on_crawler_finished.name
-  target_id = "trigger-controlshift-run-glue-job"
+  target_id = "trigger-controlshift-run-glue-job${local.namespace_suffix_dashed}"
   arn       = aws_lambda_function.glue_job_lambda.arn
 }
 
