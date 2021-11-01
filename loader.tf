@@ -8,8 +8,8 @@ resource "aws_lambda_function" "loader" {
   timeout       = 900
 
   vpc_config {
-    subnet_ids         = compact(concat(var.lambda_loader_subnet_ids, list("")))
-    security_group_ids = compact(concat(var.lambda_loader_security_group_ids, list("")))
+    subnet_ids         = var.lambda_loader_subnet_ids
+    security_group_ids = var.lambda_loader_security_group_ids
   }
 
   environment {
