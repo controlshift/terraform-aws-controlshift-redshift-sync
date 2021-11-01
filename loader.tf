@@ -1,6 +1,11 @@
 resource "aws_lambda_function" "loader" {
-  s3_bucket = local.lambda_buckets[var.aws_region]
-  s3_key = "LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.7.8.zip"
+
+  # Need to customize the code to support custom table names
+  #s3_bucket = local.lambda_buckets[var.aws_region]
+  #s3_key = "LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.7.8.zip"
+  s3_bucket = "tmc-custom-controlshift-aws-lambda-redshift-loader"
+  s3_key = "LambdaRedshiftLoader/AWSLambdaRedshiftLoader-tmc-custom-20211101-2.7.8.zip"
+
   function_name = "controlshift-redshift-loader${local.namespace_suffix_dashed}"
   role          = aws_iam_role.loader_lambda_role.arn
   handler       = "index.handler"
@@ -16,6 +21,9 @@ resource "aws_lambda_function" "loader" {
     variables = {
       "DEBUG" = "true"
       "CONTROLSHIFT_AWS_REGION" = var.controlshift_aws_region
+      "OVERRIDE_CONFIG_TABLE" = "LambdaRedshiftBatchLoadConfig${local.namespace_suffix_dashed}"
+      "OVERRIDE_BATCH_TABLE" = "LambdaRedshiftBatches${local.namespace_suffix_dashed}"
+      "OVERRIDE_FILES_TABLE" = "LambdaRedshiftProcessedFiles${local.namespace_suffix_dashed}"
     }
   }
 }

@@ -10,3 +10,6 @@
 lambdas/*.zip
 .idea/
 .DS_Store
+
+# vim files
+*.swp
