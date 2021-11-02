@@ -122,3 +122,9 @@ variable "namespace_suffixes" {
   description = "Suffixes to add to each named resource managed by this sync. For managing multiple syncs in one AWS account."
 }
 
+variable "manage_aws_api_gateway_account_settings" {
+  default = 1
+  type = number
+  description = "Set to `0` to prevent creation of aws_api_gateway_account resource"
+}
+
