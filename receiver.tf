@@ -9,7 +9,7 @@ resource "aws_lambda_function" "receiver_lambda" {
   function_name = "controlshift-webhook-handler"
   role          = aws_iam_role.receiver_lambda_role.arn
   handler       = "receiver.handler"
-  runtime       = "nodejs10.x"
+  runtime       = "nodejs12.x"
   timeout       = var.receiver_timeout
   source_code_hash = data.archive_file.receiver_zip.output_base64sha256
 
