@@ -110,3 +110,8 @@ variable "glue_physical_connection_requirements" {
   type = object({ availability_zone=string, subnet_id=string, security_group_id_list=list(string) })
   description = "A terraform map of the physical_connection_requirements property of the glue redshift connection. See Terraform aws_glue_connection docs."
 }
+
+variable "vpc_id" {
+  type = string
+  description = "The ID of the VPC Glue uses for connecting with Redshift"
+}

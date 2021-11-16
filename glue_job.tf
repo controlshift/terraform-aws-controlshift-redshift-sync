@@ -246,3 +246,14 @@ resource "aws_cloudwatch_event_target" "notify_failed_glue_job" {
   target_id = "notify-failed-glue-job-run"
   arn       = aws_sns_topic.glue_job_failure.arn
 }
+
+
+data "aws_vpc" "main" {
+  id = var.vpc_id
+}
+
+# Glue jobs require a VPC endpoint for connecting to S3
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id       = data.aws_vpc.main.id
+  service_name = "com.amazonaws.${var.aws_region}.s3"
+}
