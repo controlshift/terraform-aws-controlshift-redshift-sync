@@ -123,13 +123,10 @@ resource "aws_glue_connection" "redshift_connection" {
     JDBC_ENFORCE_SSL    = false
   }
 
-  dynamic "physical_connection_requirements" {
-    for_each = var.glue_physical_connection_requirements == null ? [] : list(var.glue_physical_connection_requirements)
-    content {
-      availability_zone = physical_connection_requirements.value.availability_zone
-      security_group_id_list = physical_connection_requirements.value.security_group_id_list
-      subnet_id = physical_connection_requirements.value.subnet_id
-    }
+  physical_connection_requirements {
+    availability_zone = var.glue_physical_connection_requirements.availability_zone
+    security_group_id_list = var.glue_physical_connection_requirements.security_group_id_list
+    subnet_id = var.glue_physical_connection_requirements.subnet_id
   }
 }
 
@@ -248,4 +245,15 @@ resource "aws_cloudwatch_event_target" "notify_failed_glue_job" {
   rule      = aws_cloudwatch_event_rule.failed_glue_job_run.name
   target_id = "notify-failed-glue-job-run"
   arn       = aws_sns_topic.glue_job_failure.arn
+}
+
+
+data "aws_vpc" "main" {
+  id = var.vpc_id
+}
+
+# Glue jobs require a VPC endpoint for connecting to S3
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id       = data.aws_vpc.main.id
+  service_name = "com.amazonaws.${var.aws_region}.s3"
 }
