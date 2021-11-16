@@ -258,6 +258,7 @@ data "aws_route_tables" "all_route_tables" {
 
 # Glue jobs require a VPC endpoint for connecting to S3
 resource "aws_vpc_endpoint" "s3" {
+  count = var.manage_aws_vpc_endpoint_s3
   vpc_id       = data.aws_vpc.main.id
   service_name = "com.amazonaws.${var.aws_region}.s3"
 }

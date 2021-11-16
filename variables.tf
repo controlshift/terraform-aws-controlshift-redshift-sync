@@ -128,3 +128,9 @@ variable "manage_aws_api_gateway_account_settings" {
   description = "Set to `0` to prevent creation of aws_api_gateway_account resource"
 }
 
+variable "manage_aws_vpc_endpoint_s3" {
+  default = 1
+  type = number
+  description = "Set to `0` to prevent creation of aws_vpc_endpoint for S3"
+}
+
