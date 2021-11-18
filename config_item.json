@@ -10,7 +10,7 @@
       "targetTable": {"S": "${schema}.${bulk_data_table}"},
       "columnList": {"S": "${column_list}"},
       "truncateTarget": {"BOOL": ${truncate_target}},
-      "useSSL": {"BOOL": false}
+      "useSSL": {"BOOL": true}
     }}]},
   "copyOptions": {"S": "EMPTYASNULL TRUNCATECOLUMNS"},
   "dataFormat": {"S": "CSV"},
