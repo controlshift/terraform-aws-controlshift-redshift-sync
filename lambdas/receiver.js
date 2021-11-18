@@ -23,7 +23,7 @@ function putFirehose(data, stream) {
   });
 }
 
-function enqueueTask(receivedData, kind) {
+async function enqueueTask(receivedData, kind) {
   console.log("Processing: " + receivedData.url);
 
   let messageBody = {};
@@ -53,9 +53,9 @@ function enqueueTask(receivedData, kind) {
   let loaderResp = sqs.sendMessage(loaderQueueParams).promise();
   let glueResp = sqs.sendMessage(glueQueueParams).promise();
 
-  Promise.all([loaderResp, glueResp]).then(
+  await Promise.all([loaderResp, glueResp]).then(
     function(data) {
-      console.log("Success " + data.MessageId);
+      console.log("Success " + JSON.stringify(data));
     },
     function(error) {
       console.log("Error", error);

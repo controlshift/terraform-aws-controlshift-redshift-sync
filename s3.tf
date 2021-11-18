@@ -1,6 +1,5 @@
 # Additional provider configuration for region your controlshift platform lives within.
 provider "aws" {
-  version = "~> 2.0"
   alias  = "controlshift"
   region = var.controlshift_aws_region
 }
