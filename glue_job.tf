@@ -264,8 +264,8 @@ resource "aws_vpc_endpoint" "s3" {
 }
 
 resource "aws_vpc_endpoint_route_table_association" "s3" {
-  count = length(data.aws_route_tables.all_route_tables.ids)
+  count = min(length(data.aws_route_tables.all_route_tables.ids), var.manage_aws_vpc_endpoint_s3)
 
   route_table_id  = tolist(data.aws_route_tables.all_route_tables.ids)[count.index]
-  vpc_endpoint_id = aws_vpc_endpoint.s3.id
+  vpc_endpoint_id = aws_vpc_endpoint.s3[0].id
 }
