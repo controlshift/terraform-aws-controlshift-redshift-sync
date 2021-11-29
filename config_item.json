@@ -22,5 +22,6 @@
   "successTopicARN": {"S": "${success_topic_arn}"},
   "failureTopicARN": {"S": "${failure_topic_arn}"},
   "batchSize": {"N": "1"},
-  "currentBatch": {"S": "${current_batch}" }
+  "currentBatch": {"S": "${current_batch}"},
+  "compress": {"S": "${compress}"}
 }
