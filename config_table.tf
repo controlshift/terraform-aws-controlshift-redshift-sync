@@ -13,7 +13,7 @@ resource "aws_dynamodb_table" "loader_config" {
 }
 
 resource "aws_dynamodb_table_item" "load_config_full_items" {
-  for_each = toset([for table in jsondecode(data.http.bulk_data_schemas.body)["tables"] : table["table"]["name"]])
+  for_each = toset([for table in local.parsed_bulk_data_schemas["tables"] : table["table"]["name"]])
 
   table_name = aws_dynamodb_table.loader_config.name
   hash_key   = aws_dynamodb_table.loader_config.hash_key
@@ -34,7 +34,7 @@ resource "aws_dynamodb_table_item" "load_config_full_items" {
 }
 
 data "template_file" "loader_config_full_item" {
-  for_each = toset([for table in jsondecode(data.http.bulk_data_schemas.body)["tables"] : table["table"]["name"]])
+  for_each = toset([for table in local.parsed_bulk_data_schemas["tables"] : table["table"]["name"]])
 
   template = "${file("${path.module}/config_item.json")}"
   vars = {
@@ -55,11 +55,12 @@ data "template_file" "loader_config_full_item" {
     current_batch = random_id.current_batch.b64_url
     column_list = data.http.column_list[each.key].body
     truncate_target = true
+    compress = try(local.parsed_bulk_data_schemas["settings"]["compression_format"], "")
   }
 }
 
 resource "aws_dynamodb_table_item" "load_config_incremental_items" {
-  for_each = toset([for table in jsondecode(data.http.bulk_data_schemas.body)["tables"] : table["table"]["name"]])
+  for_each = toset([for table in local.parsed_bulk_data_schemas["tables"] : table["table"]["name"]])
 
   table_name = aws_dynamodb_table.loader_config.name
   hash_key   = aws_dynamodb_table.loader_config.hash_key
@@ -80,7 +81,7 @@ resource "aws_dynamodb_table_item" "load_config_incremental_items" {
 }
 
 data "template_file" "loader_config_incremental_item" {
-  for_each = toset([for table in jsondecode(data.http.bulk_data_schemas.body)["tables"] : table["table"]["name"]])
+  for_each = toset([for table in local.parsed_bulk_data_schemas["tables"] : table["table"]["name"]])
 
   template = "${file("${path.module}/config_item.json")}"
   vars = {
@@ -101,6 +102,7 @@ data "template_file" "loader_config_incremental_item" {
     current_batch = random_id.current_batch.b64_url
     column_list = data.http.column_list[each.key].body
     truncate_target = false
+    compress = try(local.parsed_bulk_data_schemas["settings"]["compression_format"], "")
   }
 }
 
@@ -131,8 +133,12 @@ data "http" "bulk_data_schemas" {
   url = "https://${var.controlshift_hostname}/api/bulk_data/schema.json"
 }
 
+locals {
+  parsed_bulk_data_schemas = jsondecode(data.http.bulk_data_schemas.body)
+}
+
 data "http" "column_list" {
-  for_each = toset([for table in jsondecode(data.http.bulk_data_schemas.body)["tables"] : table["table"]["name"]])
+  for_each = toset([for table in local.parsed_bulk_data_schemas["tables"] : table["table"]["name"]])
 
   url = "https://${var.controlshift_hostname}/api/bulk_data/schema/columns?table=${each.key}"
 }
