@@ -77,6 +77,18 @@ variable "controlshift_hostname" {
   description = "The hostname of your ControlShift instance. Likely to be something like action.myorganization.org"
 }
 
+variable "email_open_firehose_stream" {
+  type        = string
+  description = "The name of a Firehose stream that will receive email open events."
+  default = ""
+}
+
+variable "email_click_firehose_stream" {
+  type        = string
+  description = "The name of a Firehose stream that will receive email click events."
+  default = ""
+}
+
 variable "receiver_timeout" {
   default = 60
   type        = number
