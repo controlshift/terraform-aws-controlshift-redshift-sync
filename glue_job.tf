@@ -139,8 +139,6 @@ resource "aws_glue_job" "signatures_full" {
     "--job-bookmark-option": "job-bookmark-disable",
     "--job-language": "python"
   }
-  number_of_workers = 10
-  worker_type = "G.1X"
 
   role_arn = aws_iam_role.glue_service_role.arn
 
