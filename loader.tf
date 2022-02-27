@@ -1,5 +1,6 @@
 resource "aws_lambda_function" "loader" {
   s3_bucket = local.lambda_buckets[var.aws_region]
+  # TODO: This needs to be updated
   s3_key = "LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.7.8.zip"
   function_name = "controlshift-redshift-loader"
   role          = aws_iam_role.loader_lambda_role.arn
