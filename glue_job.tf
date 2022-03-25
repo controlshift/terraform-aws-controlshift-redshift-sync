@@ -18,14 +18,19 @@ resource "aws_glue_crawler" "signatures_crawler" {
 
 resource "aws_s3_bucket" "glue_resources" {
   bucket = var.glue_scripts_bucket_name
-  region = var.aws_region
+}
 
-  acl = "private"
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
+resource "aws_s3_bucket_acl" "glue_resources" {
+  bucket = aws_s3_bucket.glue_resources.id
+  acl    = "private"
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "glue_resources" {
+  bucket = aws_s3_bucket.glue_resources.bucket
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm     = "AES256"
     }
   }
 }
@@ -40,7 +45,7 @@ data "template_file" "signatures_script" {
   }
 }
 
-resource "aws_s3_bucket_object" "signatures_script" {
+resource "aws_s3_object" "signatures_script" {
   bucket = aws_s3_bucket.glue_resources.id
   key = "${var.controlshift_environment}/signatures_job.py"
   acl = "private"
