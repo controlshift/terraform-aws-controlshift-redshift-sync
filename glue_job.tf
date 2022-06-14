@@ -4,6 +4,8 @@ resource "aws_glue_catalog_database" "catalog_db" {
 
 locals {
   signatures_s3_path = "s3://agra-data-exports-${var.controlshift_environment}/${var.controlshift_organization_slug}/full/signatures"
+  signatures_table_index = index(local.parsed_bulk_data_schemas.tables.*.table.name, "signatures")
+  signatures_table_columns = local.parsed_bulk_data_schemas.tables[local.signatures_table_index].table.columns
 }
 
 resource "aws_glue_crawler" "signatures_crawler" {
@@ -35,14 +37,35 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "glue_resources" {
   }
 }
 
-data "template_file" "signatures_script" {
-  template = file("${path.module}/templates/signatures_job.py.tpl")
-  vars = {
+locals {
+  # Unsupported column types read from CSV files: all of these will be read as 'string'
+  unsupported_input_column_types = [
+    "boolean",
+    "character varying.*",
+    "decimal.*",
+    "hstore",
+    "jsonb",
+    "numeric.*",
+    "timestamp"
+  ]
+
+  # Unsupported columnt types for Redshift: these will be replaced by the mapped type
+  unsupported_output_column_types = {
+    "hstore" = "string"
+    "jsonb" = "string"
+    "numeric\\(3,2\\)" = "decimal(3,2)"
+    "timestamp without time zone" = "timestamp"
+  }
+
+  signatures_script = templatefile("${path.module}/templates/signatures_job.py.tftpl", {
     catalog_database_name = aws_glue_catalog_database.catalog_db.name
+    unsupported_input_column_types = local.unsupported_input_column_types
+    unsupported_output_column_types = local.unsupported_output_column_types
     redshift_database_name = var.redshift_database_name
     redshift_schema = var.redshift_schema
     redshift_connection_name = aws_glue_connection.redshift_connection.name
-  }
+    signatures_table_columns = local.signatures_table_columns
+  })
 }
 
 resource "aws_s3_object" "signatures_script" {
@@ -50,7 +73,7 @@ resource "aws_s3_object" "signatures_script" {
   key = "${var.controlshift_environment}/signatures_job.py"
   acl = "private"
 
-  content = data.template_file.signatures_script.rendered
+  content = local.signatures_script
 }
 
 resource "aws_iam_role" "glue_service_role" {
