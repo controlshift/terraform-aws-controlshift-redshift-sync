@@ -14,6 +14,7 @@ resource "aws_s3_bucket" "manifest" {
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "manifest" {
+  provider = aws.controlshift
   bucket = aws_s3_bucket.manifest.id
 
   # expire the ingested manifests after 5 days after they have been processed to save disk space while providing enough
@@ -29,11 +30,13 @@ resource "aws_s3_bucket_lifecycle_configuration" "manifest" {
 }
 
 resource "aws_s3_bucket_acl" "manifest" {
+  provider = aws.controlshift
   bucket = aws_s3_bucket.manifest.id
   acl    = "private"
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "manifest" {
+  provider = aws.controlshift
   bucket = aws_s3_bucket.manifest.bucket
 
   rule {
