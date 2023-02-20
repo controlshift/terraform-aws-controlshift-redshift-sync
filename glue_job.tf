@@ -10,6 +10,14 @@ resource "aws_glue_crawler" "signatures_crawler" {
   database_name = aws_glue_catalog_database.catalog_db.name
   name = "${var.controlshift_environment}_full_signatures"
   role = aws_iam_role.glue_service_role.arn
+  configuration = jsonencode(
+      {
+        Grouping = {
+            TableGroupingPolicy = "CombineCompatibleSchemas"
+          }
+        Version  = 1
+      }
+  )
 
   s3_target {
     path = local.signatures_s3_path
@@ -146,6 +154,8 @@ resource "aws_glue_job" "signatures_full" {
   name = "cs-${var.controlshift_environment}-signatures-full"
   connections = [ aws_glue_connection.redshift_connection.name ]
   glue_version = "3.0"
+  number_of_workers = 9
+  worker_type = "G.1X"
   default_arguments = {
     "--TempDir": "s3://${aws_s3_bucket.glue_resources.bucket}/${var.controlshift_environment}/temp",
     "--job-bookmark-option": "job-bookmark-disable",
