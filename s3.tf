@@ -24,14 +24,13 @@ resource "aws_s3_bucket" "manifest" {
   # expire the ingested manifests after 5 days after they have been processed to save disk space while providing enough
   # time to analyze things that might have gone wrong.
   lifecycle_rule {
-    id      = "Remove temp files over a week old"
-    abort_incomplete_multipart_upload_days = 0
+    id      = "expire-manifests"
     enabled = true
-    prefix = "production/temp/"
 
     expiration {
-      days = 7
-      expired_object_delete_marker = false
+      days = 5
     }
   }
 }
+
+

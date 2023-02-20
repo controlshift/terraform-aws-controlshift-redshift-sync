@@ -28,6 +28,18 @@ resource "aws_s3_bucket" "glue_resources" {
       }
     }
   }
+
+  lifecycle_rule {
+    id      = "Remove temp files over a week old"
+    abort_incomplete_multipart_upload_days = 0
+    enabled = true
+    prefix = "production/temp/"
+
+    expiration {
+      days = 7
+      expired_object_delete_marker = false
+    }
+  }
 }
 
 data "template_file" "signatures_script" {
