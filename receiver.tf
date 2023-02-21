@@ -21,6 +21,11 @@ resource "aws_lambda_function" "receiver_lambda" {
       EMAIL_CLICK_FIREHOSE_STREAM = var.email_click_firehose_stream
     }
   }
+
+  // This prevents noisy logs from cluttering up datadog
+  tags = {
+    datadog = "exclude"
+  }
 }
 
 resource "aws_api_gateway_rest_api" "receiver" {
