@@ -8,7 +8,6 @@ resource "aws_s3_bucket" "manifest" {
   provider = aws.controlshift
   bucket = var.manifest_bucket_name
   acl    = "private"
-  region = var.controlshift_aws_region
 
   server_side_encryption_configuration {
     rule {
