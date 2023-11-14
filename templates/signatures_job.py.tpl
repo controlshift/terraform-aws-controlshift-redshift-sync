@@ -55,13 +55,10 @@ applymapping1 = ApplyMapping.apply(
       ("join_organisation", "string", "join_organisation", "boolean"),
       ("deleted_at", "string", "deleted_at", "timestamp"),
       ("unsubscribe_at", "string", "unsubscribe_at", "timestamp"),
-      ("external_constituent_id", "bigint", "external_constituent_id", "string"),
       ("member_id", "bigint", "member_id", "int"),
       ("additional_fields", "string", "additional_fields", "string"),
       ("cached_organisation_slug", "string", "cached_organisation_slug", "string"),
       ("source", "string", "source", "string"),
-      ("join_partnership", "string", "join_partnership", "boolean"),
-      ("external_id", "bigint", "external_id", "string"),
       ("new_member", "string", "new_member", "boolean"),
       ("external_action_id", "string", "external_action_id", "string"),
       ("locale", "string", "locale", "string"),
@@ -93,7 +90,9 @@ applymapping1 = ApplyMapping.apply(
       ("sms_opt_in_type_id", "string", "sms_opt_in_type_id", "bigint"),
       ("recaptcha_score", "string", "recaptcha_score", "decimal(3,2)"),
       ("new_mobile_subscriber", "string", "new_mobile_subscriber", "boolean"),
-      ("external_ids", "string", "external_ids", "string")
+      ("external_ids", "string", "external_ids", "string"),
+      ("partnership_opt_ins", "string", "partnership_opt_ins", "string"),
+      ("after_action", "string", "after_action", "string")
       ],
     transformation_ctx = "applymapping1")
 
