@@ -44,57 +44,549 @@ datasource1 = glueContext.create_dynamic_frame.from_catalog(
 applymapping1 = ApplyMapping.apply(
     frame = datasource1,
     mappings = [
-      ("id", "bigint", "id", "int"),
-      ("petition_id", "bigint", "petition_id", "int"),
-      ("email", "string", "email", "string"),
-      ("first_name", "string", "first_name", "string"),
-      ("last_name", "string", "last_name", "string"),
-      ("phone_number", "string", "phone_number", "string"),
-      ("postcode", "string", "postcode", "string"),
-      ("created_at", "string", "created_at", "timestamp"),
-      ("join_organisation", "string", "join_organisation", "boolean"),
-      ("deleted_at", "string", "deleted_at", "timestamp"),
-      ("unsubscribe_at", "string", "unsubscribe_at", "timestamp"),
-      ("member_id", "bigint", "member_id", "int"),
-      ("additional_fields", "string", "additional_fields", "string"),
-      ("cached_organisation_slug", "string", "cached_organisation_slug", "string"),
-      ("source", "string", "source", "string"),
-      ("new_member", "string", "new_member", "boolean"),
-      ("external_action_id", "string", "external_action_id", "string"),
-      ("locale", "string", "locale", "string"),
-      ("bucket", "string", "bucket", "string"),
-      ("country", "string", "country", "string"),
-      ("updated_at", "string", "updated_at", "timestamp"),
-      ("user_ip", "string", "user_ip", "string"),
-      ("confirmation_token", "string", "confirmation_token", "string"),
-      ("confirmed_at", "string", "confirmed_at", "timestamp"),
-      ("confirmation_sent_at", "string", "confirmation_sent_at", "timestamp"),
-      ("last_signed_at", "string", "last_signed_at", "timestamp"),
-      ("join_list_suppressed", "string", "join_list_suppressed", "boolean"),
-      ("old_daisy_chain_used", "string", "old_daisy_chain_used", "string"),
-      ("from_embed", "string", "from_embed", "boolean"),
-      ("user_agent", "string", "user_agent", "string"),
-      ("confirmed_reason", "string", "confirmed_reason", "string"),
-      ("synced_to_crm_at", "string", "synced_to_crm_at", "timestamp"),
-      ("daisy_chain_experiment_slug", "string", "daisy_chain_experiment_slug", "string"),
-      ("eu_data_processing_consent", "string", "eu_data_processing_consent", "boolean"),
-      ("from_one_click", "string", "from_one_click", "boolean"),
-      ("consent_content_version_id", "string", "consent_content_version_id", "bigint"),
-      ("daisy_chain_id_used", "bigint", "daisy_chain_id_used", "bigint"),
-      ("email_opt_in_type_id", "bigint", "email_opt_in_type_id", "bigint"),
-      ("facebook_id", "string", "facebook_id", "string"),
-      ("utm_params", "string", "utm_params", "string"),
-      ("postcode_id", "bigint", "postcode_id", "bigint"),
-      ("referring_share_click_id", "bigint", "referring_share_click_id", "int"),
-      ("opt_in_sms", "string", "opt_in_sms", "boolean"),
-      ("sms_opt_in_type_id", "string", "sms_opt_in_type_id", "bigint"),
-      ("recaptcha_score", "string", "recaptcha_score", "decimal(3,2)"),
-      ("new_mobile_subscriber", "string", "new_mobile_subscriber", "boolean"),
-      ("external_ids", "string", "external_ids", "string"),
-      ("partnership_opt_ins", "string", "partnership_opt_ins", "string"),
-      ("after_action", "string", "after_action", "string")
-      ],
+      
+      (
+        "additional_fields",
+        
+        "string",
+        
+        "additional_fields",
+        
+        "character varying",
+        
+      ),
+      
+      (
+        "after_action",
+        
+        "string",
+        
+        "after_action",
+        
+        "character varying"
+        
+      ),
+      
+      (
+        "bucket",
+        
+        "string",
+        
+        "bucket",
+        
+        "character varying(255)"
+        
+      ),
+      
+      (
+        "cached_organisation_slug",
+        
+        "string",
+        
+        "cached_organisation_slug",
+        
+        "character varying(255)"
+        
+      ),
+      
+      (
+        "confirmation_sent_at",
+        
+        "string",
+        
+        "confirmation_sent_at",
+        
+        "timestamp",
+        
+      ),
+      
+      (
+        "confirmation_token",
+        
+        "string",
+        
+        "confirmation_token",
+        
+        "character varying(255)"
+        
+      ),
+      
+      (
+        "confirmed_at",
+        
+        "string",
+        
+        "confirmed_at",
+        
+        "timestamp",
+        
+      ),
+      
+      (
+        "confirmed_reason",
+        
+        "string",
+        
+        "confirmed_reason",
+        
+        "character varying"
+        
+      ),
+      
+      (
+        "consent_content_version_id",
+        
+        "string",
+        
+        "consent_content_version_id",
+        
+        "bigint"
+        
+      ),
+      
+      (
+        "country",
+        
+        "string",
+        
+        "country",
+        
+        "character varying(255)"
+        
+      ),
+      
+      (
+        "created_at",
+        
+        "string",
+        
+        "created_at",
+        
+        "timestamp",
+        
+      ),
+      
+      (
+        "daisy_chain_experiment_slug",
+        
+        "string",
+        
+        "daisy_chain_experiment_slug",
+        
+        "character varying"
+        
+      ),
+      
+      (
+        "daisy_chain_id_used",
+        
+        "bigint",
+        
+        "daisy_chain_id_used",
+        
+        "bigint"
+        
+      ),
+      
+      (
+        "deleted_at",
+        
+        "string",
+        
+        "deleted_at",
+        
+        "timestamp",
+        
+      ),
+      
+      (
+        "email",
+        
+        "string",
+        
+        "email",
+        
+        "character varying(255)"
+        
+      ),
+      
+      (
+        "email_opt_in_type_id",
+        
+        "bigint",
+        
+        "email_opt_in_type_id",
+        
+        "bigint"
+        
+      ),
+      
+      (
+        "eu_data_processing_consent",
+        
+        "string",
+        
+        "eu_data_processing_consent",
+        
+        "boolean"
+        
+      ),
+      
+      (
+        "external_action_id",
+        
+        "string",
+        
+        "external_action_id",
+        
+        "character varying(255)"
+        
+      ),
+      
+      (
+        "external_ids",
+        
+        "string",
+        
+        "external_ids",
+        
+        "character varying",
+        
+      ),
+      
+      (
+        "facebook_id",
+        
+        "string",
+        
+        "facebook_id",
+        
+        "character varying"
+        
+      ),
+      
+      (
+        "first_name",
+        
+        "string",
+        
+        "first_name",
+        
+        "character varying(255)"
+        
+      ),
+      
+      (
+        "from_embed",
+        
+        "string",
+        
+        "from_embed",
+        
+        "boolean"
+        
+      ),
+      
+      (
+        "from_one_click",
+        
+        "string",
+        
+        "from_one_click",
+        
+        "boolean"
+        
+      ),
+      
+      (
+        "id",
+        
+        "bigint",
+        
+        "id",
+        
+        "bigint"
+        
+      ),
+      
+      (
+        "join_list_suppressed",
+        
+        "string",
+        
+        "join_list_suppressed",
+        
+        "boolean"
+        
+      ),
+      
+      (
+        "join_organisation",
+        
+        "string",
+        
+        "join_organisation",
+        
+        "boolean"
+        
+      ),
+      
+      (
+        "last_name",
+        
+        "string",
+        
+        "last_name",
+        
+        "character varying(255)"
+        
+      ),
+      
+      (
+        "last_signed_at",
+        
+        "string",
+        
+        "last_signed_at",
+        
+        "timestamp",
+        
+      ),
+      
+      (
+        "locale",
+        
+        "string",
+        
+        "locale",
+        
+        "character varying(5)"
+        
+      ),
+      
+      (
+        "member_id",
+        
+        "bigint",
+        
+        "member_id",
+        
+        "integer"
+        
+      ),
+      
+      (
+        "new_member",
+        
+        "string",
+        
+        "new_member",
+        
+        "boolean"
+        
+      ),
+      
+      (
+        "new_mobile_subscriber",
+        
+        "string",
+        
+        "new_mobile_subscriber",
+        
+        "boolean"
+        
+      ),
+      
+      (
+        "old_daisy_chain_used",
+        
+        "string",
+        
+        "old_daisy_chain_used",
+        
+        "character varying(50)"
+        
+      ),
+      
+      (
+        "opt_in_sms",
+        
+        "string",
+        
+        "opt_in_sms",
+        
+        "boolean"
+        
+      ),
+      
+      (
+        "partnership_opt_ins",
+        
+        "string",
+        
+        "partnership_opt_ins",
+        
+        "character varying",
+        
+      ),
+      
+      (
+        "petition_id",
+        
+        "bigint",
+        
+        "petition_id",
+        
+        "integer"
+        
+      ),
+      
+      (
+        "phone_number",
+        
+        "string",
+        
+        "phone_number",
+        
+        "character varying(255)"
+        
+      ),
+      
+      (
+        "postcode",
+        
+        "string",
+        
+        "postcode",
+        
+        "character varying(255)"
+        
+      ),
+      
+      (
+        "postcode_id",
+        
+        "bigint",
+        
+        "postcode_id",
+        
+        "bigint"
+        
+      ),
+      
+      (
+        "recaptcha_score",
+        
+        "string",
+        
+        "recaptcha_score",
+        
+        "decimal(3,2)",
+        
+      ),
+      
+      (
+        "referring_share_click_id",
+        
+        "bigint",
+        
+        "referring_share_click_id",
+        
+        "integer"
+        
+      ),
+      
+      (
+        "sms_opt_in_type_id",
+        
+        "string",
+        
+        "sms_opt_in_type_id",
+        
+        "bigint"
+        
+      ),
+      
+      (
+        "source",
+        
+        "string",
+        
+        "source",
+        
+        "character varying(255)"
+        
+      ),
+      
+      (
+        "synced_to_crm_at",
+        
+        "string",
+        
+        "synced_to_crm_at",
+        
+        "timestamp",
+        
+      ),
+      
+      (
+        "unsubscribe_at",
+        
+        "string",
+        
+        "unsubscribe_at",
+        
+        "timestamp",
+        
+      ),
+      
+      (
+        "updated_at",
+        
+        "string",
+        
+        "updated_at",
+        
+        "timestamp",
+        
+      ),
+      
+      (
+        "user_agent",
+        
+        "string",
+        
+        "user_agent",
+        
+        "character varying"
+        
+      ),
+      
+      (
+        "user_ip",
+        
+        "string",
+        
+        "user_ip",
+        
+        "character varying"
+        
+      ),
+      
+      (
+        "utm_params",
+        
+        "string",
+        
+        "utm_params",
+        
+        "character varying",
+        
+      ),
+      
+    ],
     transformation_ctx = "applymapping1")
+
 
 # Step 4: Deal with column types that aren't consistent
 ## @type: ResolveChoice
