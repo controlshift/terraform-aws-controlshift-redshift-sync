@@ -1,6 +1,6 @@
 data "archive_file" "receiver_zip" {
   type        = "zip"
-  source_file = "${path.module}/lambdas/receiver.js"
+  source_dir = "${path.module}/lambdas/receiver/"
   output_path = "${path.module}/lambdas/receiver.zip"
 }
 
@@ -11,7 +11,7 @@ resource "aws_lambda_function" "receiver_lambda" {
   handler       = "receiver.handler"
   runtime       = "nodejs12.x"
   timeout       = var.receiver_timeout
-  source_code_hash = data.archive_file.receiver_zip.output_base64sha256
+  source_code_hash = filebase64sha256(data.archive_file.receiver_zip.output_path)
 
   environment {
     variables = {
@@ -19,6 +19,8 @@ resource "aws_lambda_function" "receiver_lambda" {
       GLUE_SQS_QUEUE_URL = aws_sqs_queue.receiver_queue_glue.id
       EMAIL_OPEN_FIREHOSE_STREAM = var.email_open_firehose_stream
       EMAIL_CLICK_FIREHOSE_STREAM = var.email_click_firehose_stream
+      CSL_CLIENT_ID = var.csl_client_id
+      CSL_CLIENT_SECRET = var.csl_client_secret
     }
   }
 
