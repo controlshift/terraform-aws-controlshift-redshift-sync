@@ -10,7 +10,7 @@ resource "aws_lambda_function" "glue_job_lambda" {
   function_name = "controlshift-run-glue-job"
   role          = aws_iam_role.run_glue_job_lambda_role.arn
   handler       = "run-glue-job.handler"
-  runtime       = "nodejs20.x"
+  runtime       = "nodejs16.x"
   timeout       = 60
   source_code_hash = data.archive_file.run_glue_job_zip.output_base64sha256
 
