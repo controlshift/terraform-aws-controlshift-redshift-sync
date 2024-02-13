@@ -10,7 +10,7 @@ resource "aws_lambda_function" "glue_crawler_lambda" {
   function_name = "controlshift-run-glue-crawler"
   role          = aws_iam_role.run_glue_crawler_lambda_role.arn
   handler       = "run-glue-crawler.handler"
-  runtime       = "nodejs20.x"
+  runtime       = "nodejs16.x"
   timeout       = 60
   source_code_hash = data.archive_file.run_glue_crawler_zip.output_base64sha256
 
