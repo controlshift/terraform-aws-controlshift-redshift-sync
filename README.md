@@ -15,3 +15,6 @@ For generating new releases follow the steps below:
 6. Enter a title and a description of this release's changes.
 7. Click on _Publish release_
 8. Verify the new version is listed as the latest at [Terraform Module Registry listing](https://registry.terraform.io/modules/controlshift/controlshift-redshift-sync/aws/)
+
+### Infrastructure model
+![controlshift_terraform-aws-controlshift-redshift-sync](https://github.com/controlshift/terraform-aws-controlshift-redshift-sync/assets/173192552/aa556a57-c313-480b-84b9-5561a2bdb40c)
