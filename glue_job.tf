@@ -22,17 +22,48 @@ resource "aws_s3_bucket" "glue_resources" {
   bucket = var.glue_scripts_bucket_name
 }
 
-resource "aws_s3_bucket_acl" "glue_resources" {
+# Ownership controls block is required to support ACLs.
+resource "aws_s3_bucket_ownership_controls" "glue_resources" {
   bucket = aws_s3_bucket.glue_resources.id
-  acl    = "private"
+  rule {
+    object_ownership = "ObjectWriter"
+  }
+}
+
+resource "aws_s3_bucket_acl" "glue_resources" {
+  depends_on = [aws_s3_bucket_ownership_controls.glue_resources]
+
+  bucket = aws_s3_bucket.glue_resources.id
+  acl = "private"
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "glue_resources" {
-  bucket = aws_s3_bucket.glue_resources.bucket
+  bucket = aws_s3_bucket.glue_resources.id
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm     = "AES256"
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "glue_resources" {
+  bucket = aws_s3_bucket.glue_resources.id
+
+  rule {
+    id = "Remove temp files over a week old"
+    status = "Enabled"
+
+    filter {
+      prefix = "production/temp/"
+    }
+
+    expiration {
+      days = 7
+    }
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7 # Note: must be greater than 0
     }
   }
 }
